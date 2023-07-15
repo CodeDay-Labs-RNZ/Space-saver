@@ -1,0 +1,29 @@
+{
+  "name": "space-saver",
+  "version": "1.0.0",
+  "description": "Space Booking system for CodeDay Labs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeDay-Labs-RNZ/Space-saver.git"
+  },
+  "author": "Robel Hailu, Nicklas Di Pietro, Zini Wang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CodeDay-Labs-RNZ/Space-saver/issues"
+  },
+  "homepage": "https://github.com/CodeDay-Labs-RNZ/Space-saver#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.3.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
