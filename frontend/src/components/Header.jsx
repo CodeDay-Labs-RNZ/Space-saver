@@ -8,6 +8,8 @@ import {Link} from 'react-router-dom';
 
 // in unordered list is the shell for login/register.. 
 // ..if user isn't logged in, they should see login and register icon
+// if user is logged in, they should see logout icon
+// if user is logged in, they should see dashboard icon
 
 
 function Header() {
