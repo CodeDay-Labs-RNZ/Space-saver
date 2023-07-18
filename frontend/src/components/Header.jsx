@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react';
 // bringing in icons for login, register, dashboard
 // react-icons/fa <-fa(FontAwesome) one of many icon libraries, feel free to change to your liking
 import {FaSignInAlt, FaSignOutAlt, FaUser} from 'react-icons/fa';
