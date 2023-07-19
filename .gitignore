@@ -2,8 +2,9 @@
 /frontend/node_modules
 /backend/node_modules
 
-# intellij ignore
+# intellij ignore 
 .idea
+.vscode/*
 
 # dependencies
 /node_modules
@@ -13,9 +14,13 @@
 
 # testing
 frontend/coverage
+backend/coverage
 
 # production
 frontend/build
+
+# compiled output
+/backend/dist
 
 # misc
 .DS_Store
