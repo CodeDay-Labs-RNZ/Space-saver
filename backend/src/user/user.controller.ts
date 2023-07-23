@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Delete, Query, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -31,8 +31,8 @@ export class UserController {
     /* protecting account creation route using guards */
   @Post()
   @UseGuards(AuthGuard())
-  async createNewUser(@Body() user: CreateUserDto): Promise<User> {
-    return this.userService.createUser(user);
+  async createNewUser(@Body() user: CreateUserDto, @Req() req): Promise<User> {
+    return this.userService.createUser(user, req.client);
   }
 
 

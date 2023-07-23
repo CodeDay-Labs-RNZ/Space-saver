@@ -8,6 +8,7 @@ export enum BookingStatus {
 
 export class Booking {
 
+  /* use google calendar's api for start/end dates */
   @Prop({ required: true })
   bookingStartDate: Date;
 
@@ -19,6 +20,12 @@ export class Booking {
 
   @Prop()
   capacity: number;
+
+  @Prop({ required: true })
+  bookingStatus: BookingStatus;
+
+  @Prop({ unique: true })
+  bookingID: string; /* A unique identifier for each booking */
 
 
   /* are below 5 fields necessary? 
@@ -38,12 +45,6 @@ export class Booking {
   paymentMethod: string;
   */
 
-
-  @Prop({ required: true })
-  bookingStatus: BookingStatus;
-
-  @Prop({ unique: true })
-  bookingID: string; /* A unique identifier for each booking */
 }
 
 

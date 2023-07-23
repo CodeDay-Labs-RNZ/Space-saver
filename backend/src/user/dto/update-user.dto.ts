@@ -2,11 +2,13 @@
 
 import { TypeOfSpaceNeeded } from '../schemas/user.schema';
 import { BookingStatus } from '../schemas/booking.schema';
-import { IsOptional, IsEmail, IsEnum, IsDateString, IsNumber, IsString } from 'class-validator';
+import { IsOptional, IsEmail, IsEnum, IsDateString, IsNumber, IsString, IsEmpty } from 'class-validator';
+import { Client } from '../../auth/schemas/client.schema';
 
 /* this will be all the fields expected from user */
 export class UpdateUserDto {
 
+  /* 
   @IsOptional()
   @IsString()
   readonly name: string;
@@ -14,6 +16,11 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEmail()
   readonly email: string;
+  */
+ 
+
+  @IsEmpty({ message: 'Cannot pass client id' })
+  readonly client: Client
 
   @IsOptional()
   @IsString()

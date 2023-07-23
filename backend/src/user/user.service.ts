@@ -5,6 +5,7 @@ import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Query } from 'express-serve-static-core';
+import { Client } from '../auth/schemas/client.schema';
 
 
 @Injectable()
@@ -54,8 +55,10 @@ export class UserService {
 
   
   /* creating a user */
-  async createUser(user: CreateUserDto): Promise<User> {
-    const res = await this.userModel.create(user);
+  async createUser(newUser: CreateUserDto, client: Client): Promise<User> {
+    /* saving client's info  */
+    const data = Object.assign(newUser, { client: client._id})
+    const res = await this.userModel.create(data);
     return res;
   }
 
