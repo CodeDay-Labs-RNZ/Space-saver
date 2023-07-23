@@ -20,10 +20,14 @@ export class User extends Document {
   /* @Prop decorator indicates this prop should be treated as a field in the db schema/document
       can specify data types for each prop. w/out any args, defaults to string. 
       additional options: `{ required: true }` enforces field to be mandatory, `{ unique: true }` enforces uniqueness, `{ default: 'default value' }` default value */
-    
-  /* check: do I need this id field if mongoose auto generates an id 
-  @Prop({ required: true, unique: true, default: Types.ObjectId })
-  id: string;
+
+
+  /* todo: instead of forcing user to enter info, just import user info and post 
+      (User naming issue, need to refactor)
+      can also add this into create-user-dto
+  ex:  
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  user: User; 
   */
 
   @Prop({ required: true })
@@ -36,11 +40,15 @@ export class User extends Document {
   @IsString({ message: 'Email must be a string' })
   email: String;
 
+  @Prop({ required: true })
+  @IsNotEmpty({ message: 'Password is required' })
+  @IsString()
+  password: String;
+
   @Prop()
   company: String;
 
-  @Prop({ required: true })
-  @IsNotEmpty({ message: 'Type of Space Needed is required' })
+  @Prop()
   TypeOfSpaceNeeded: TypeOfSpaceNeeded;
 
   @Prop()

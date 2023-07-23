@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Delete, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Query as ExpressQuery } from 'express-serve-static-core';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -12,8 +14,8 @@ export class UserController {
 
   /* Get user by id */
   @Get()
-  async findAllUsers(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAllUsers(@Query() query: ExpressQuery): Promise<User[]> {
+    return this.userService.findAll(query);
   }
 
 
@@ -26,11 +28,10 @@ export class UserController {
 
   /* Post user */
     /* getting user from body of request. user type is of create user dto */
+    /* protecting account creation route using guards */
   @Post()
-  async createNewUser(
-    @Body() 
-    user: CreateUserDto
-  ): Promise<User> {
+  @UseGuards(AuthGuard())
+  async createNewUser(@Body() user: CreateUserDto): Promise<User> {
     return this.userService.createUser(user);
   }
 
@@ -38,12 +39,8 @@ export class UserController {
   /* Update user */
   /* getting user from body of request. user type is of create user dto */
   @Put(':id')
-  async createUser(
-    @Param('id') 
-    id: string,
-    @Body() 
-    user: UpdateUserDto,
-  ): Promise<User> {
+  async createUser(@Param('id') id: string, 
+                  @Body() user: UpdateUserDto): Promise<User> {
     return this.userService.updateUser(id, user);
   }
 
