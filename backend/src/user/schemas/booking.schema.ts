@@ -8,7 +8,11 @@ export enum BookingStatus {
 
 export class Booking {
 
-  /* use google calendar's api for start/end dates */
+  /* use google calendar's api for start/end dates or use react calendar picker: 
+    https://reactjsexample.com/tag/calendar/
+    https://mui.com/x/react-date-pickers/date-calendar/
+    https://www.npmjs.com/package/react-calendar */
+    
   @Prop({ required: true })
   bookingStartDate: Date;
 

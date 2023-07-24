@@ -21,7 +21,7 @@ export class UserController {
 
   /* Get user by id */
   @Get(':id')
-  async findAUser(@Param('id') userId: string): Promise<User | null> {
+  async findAUser(@Param('id') userId: string): Promise<User> {
     return this.userService.findUserById(userId);
   }
   
@@ -32,7 +32,7 @@ export class UserController {
   @Post()
   @UseGuards(AuthGuard())
   async createNewUser(@Body() user: CreateUserDto, @Req() req): Promise<User> {
-    return this.userService.createUser(user, req.client);
+    return this.userService.createUser(user, req.user);
   }
 
 
@@ -47,9 +47,8 @@ export class UserController {
 
   /* Get user by id */
   @Delete(':id')
-  async deleteUser(@Param('id') userId: string): Promise<User | null> {
+  async deleteUser(@Param('id') userId: string): Promise<User> {
     return this.userService.deleteUser(userId);
   }
-
 
 }

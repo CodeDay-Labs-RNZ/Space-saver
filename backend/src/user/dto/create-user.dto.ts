@@ -19,7 +19,7 @@ export class CreateUserDto {
    */
 
   @IsEmpty({ message: 'Cannot pass client id' })
-  readonly client: Client
+  readonly client: Client;
 
   @IsOptional()
   readonly company: string;

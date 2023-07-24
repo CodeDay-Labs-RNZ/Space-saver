@@ -32,7 +32,6 @@ export class UserService {
         $options: 'i'
       }
     } : {}
-
     const users = await this.userModel.find({ ...keyword }).limit(resPerPage).skip(skip);
     return users;
   }
@@ -52,7 +51,7 @@ export class UserService {
     } 
     return user;
   }
-
+ 
   
   /* creating a user */
   async createUser(newUser: CreateUserDto, client: Client): Promise<User> {
@@ -65,18 +64,24 @@ export class UserService {
 
   /* update user */
   async updateUser(userId: string, user: UpdateUserDto): Promise<User> {
-    return await this.userModel.findByIdAndUpdate(userId, user, {
+    const updatedUser = await this.userModel.findByIdAndUpdate(userId, user, {
       new: true,
-      reunValidators: true,
+      runValidators: true,
     });
+    if (!updatedUser) {
+      throw new NotFoundException("User not found");
+    }
+    return updatedUser;
   }
 
 
   /* delete user */
   async deleteUser(userId: string): Promise<User> {
-    return await this.userModel.findByIdAndDelete(userId);
+    const deletedUser = await this.userModel.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      throw new NotFoundException("User not found");
+    }
+    return deletedUser;
   }
   
-
-
 }

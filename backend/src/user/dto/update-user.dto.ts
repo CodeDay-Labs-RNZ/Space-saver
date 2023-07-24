@@ -20,7 +20,7 @@ export class UpdateUserDto {
  
 
   @IsEmpty({ message: 'Cannot pass client id' })
-  readonly client: Client
+  readonly client: Client;
 
   @IsOptional()
   @IsString()
