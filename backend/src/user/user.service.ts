@@ -13,7 +13,9 @@ export class UserService {
   /* creating constructor to inject our model for getting/using data from db */
   constructor(
     @InjectModel(User.name)
-    private userModel: mongoose.Model<User>
+    private userModel: mongoose.Model<User>,
+    @InjectModel(Client.name)
+    private clientModel: mongoose.Model<Client>,
   ) {}
 
 
@@ -33,6 +35,8 @@ export class UserService {
       }
     } : {}
     const users = await this.userModel.find({ ...keyword }).limit(resPerPage).skip(skip);
+
+    console.log(users);
     return users;
   }
 
@@ -49,38 +53,69 @@ export class UserService {
     if (!user) {
       throw new NotFoundException("User not found")
     } 
+    console.log(user);
     return user;
   }
  
   
   /* creating a user */
-  async createUser(newUser: CreateUserDto, client: Client): Promise<User> {
-    /* saving client's info  */
-    const data = Object.assign(newUser, { client: client._id})
-    const res = await this.userModel.create(data);
-    return res;
+  async createUser(newUserDto: CreateUserDto, client: Client): Promise<User> {
+    /* checking if user exists in db and throwing error (or returning existing user) */
+    const existingUser = await this.userModel.findOne({ 'clientEmail': newUserDto.clientEmail });
+    if (existingUser) {
+      throw new Error('User with this email already exists.');
+      /* Alternatively, return existing user: return existingUser; */
+    }
+    /*  Create newUser object and set the properties from the dto */
+    const newUser = new this.userModel();
+    newUser.client = client._id;
+    newUser.company = newUserDto.company;
+    newUser.TypeOfSpaceNeeded = newUserDto.typeOfSpaceNeeded;
+    newUser.price = newUserDto.price;
+    newUser.bookings = [];
+    /* Save new user to db and populate clientName/clientEmail fields, then return */
+    await newUser.save();
+    const populatedUser = await this.userModel
+      .findOne({ _id: newUser._id })
+      .populate({ path: 'client', select: 'name email' })
+      .exec();
+
+    console.log(populatedUser)
+    return populatedUser;
   }
 
 
   /* update user */
-  async updateUser(userId: string, user: UpdateUserDto): Promise<User> {
-    const updatedUser = await this.userModel.findByIdAndUpdate(userId, user, {
-      new: true,
-      runValidators: true,
-    });
+  async updateUserById(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+    /*  Update user with the updated dto, then check if user exists in db */
+    const updatedUser = await this.userModel.findByIdAndUpdate(userId, updateUserDto, { 
+      new: true, 
+      runValidators: true 
+    }).exec();
+
     if (!updatedUser) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
-    return updatedUser;
+
+    /* once user is updated, populate clientName/clientEmail fields, then return */
+    const populatedUser = await this.userModel
+    .findOne({ _id: updatedUser._id })
+    .populate({ path: 'client', select: 'name email' })
+    .exec();
+
+    console.log(populatedUser)
+    return populatedUser;
   }
 
 
+
   /* delete user */
-  async deleteUser(userId: string): Promise<User> {
+  async deleteUserById(userId: string): Promise<User> {
     const deletedUser = await this.userModel.findByIdAndDelete(userId);
     if (!deletedUser) {
       throw new NotFoundException("User not found");
     }
+    console.log(deletedUser)
     return deletedUser;
   }
   
