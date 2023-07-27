@@ -12,43 +12,47 @@ export class UserController {
   constructor(private userService: UserService) {}
 
 
-  /* Get user by id */
+  /* GET, all users */
   @Get()
   async findAllUsers(@Query() query: ExpressQuery): Promise<User[]> {
     return this.userService.findAll(query);
   }
 
 
-  /* Get user by id */
+  /* GET, user by id */
   @Get(':id')
   async findAUser(@Param('id') userId: string): Promise<User> {
     return this.userService.findUserById(userId);
   }
   
 
-  /* Post user */
+  /* POST, create new user */
     /* getting user from body of request. user type is of create user dto */
     /* protecting account creation route using guards */
   @Post()
   @UseGuards(AuthGuard())
-  async createNewUser(@Body() user: CreateUserDto, @Req() req): Promise<User> {
-    return this.userService.createUser(user, req.user);
+  async createNewUser(@Body() user: CreateUserDto, 
+                      @Req() req): Promise<{ message: string, user: User }> {
+    const newUser = await this.userService.createUser(user, req.user);
+    return {message: 'New user created', user: newUser };
   }
 
 
-  /* Update user */
+  /* PUT, update user by id */
   /* getting user from body of request. user type is of create user dto */
   @Put(':id')
-  async createUser(@Param('id') id: string, 
-                  @Body() user: UpdateUserDto): Promise<User> {
-    return this.userService.updateUser(id, user);
+  async updateUser(@Param('id') id: string, 
+                  @Body() user: UpdateUserDto): Promise<{ message: string, user: User }> {
+    const updatedUser = await this.userService.updateUserById(id, user);
+    return { message: 'User updated successfully', user: updatedUser };
   }
 
 
-  /* Get user by id */
+  /* DELETE, user by id */
   @Delete(':id')
-  async deleteUser(@Param('id') userId: string): Promise<User> {
-    return this.userService.deleteUser(userId);
+  async deleteUser(@Param('id') userId: string): Promise<{ message: string, user: User }> {
+    const deletedUser = await this.userService.deleteUserById(userId);
+    return { message: 'User deleted successfully', user: deletedUser };
   }
 
 }

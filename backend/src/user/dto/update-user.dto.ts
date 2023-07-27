@@ -8,46 +8,38 @@ import { Client } from '../../auth/schemas/client.schema';
 /* this will be all the fields expected from user */
 export class UpdateUserDto {
 
-  /* 
+  @IsEmpty({ message: 'Cannot pass client id' })
+  readonly client: Client;
+
+  /* Optional properties for clientName and clientEmail */ 
   @IsOptional()
   @IsString()
-  readonly name: string;
+  readonly clientName?: string;
 
   @IsOptional()
   @IsEmail()
-  readonly email: string;
-  */
- 
-
-  @IsEmpty({ message: 'Cannot pass client id' })
-  readonly client: Client;
+  readonly clientEmail?: string;
 
   @IsOptional()
   @IsString()
   readonly company: string;
 
-  @IsOptional()
   @IsEnum(TypeOfSpaceNeeded, { message: 'Please enter valid option'})
   readonly typeOfSpaceNeeded: TypeOfSpaceNeeded;
 
-  @IsOptional()
   @IsNumber()
   readonly price: number;
 
-  @IsOptional()
   @IsDateString()
   readonly bookingStartDate: Date;
 
-  @IsOptional()
   @IsDateString()
   readonly bookingEndDate: Date;
-  
-  @IsOptional()
+
   @IsString()
   readonly duration: string;  /* You can use a string to represent hours, days, weeks, etc. */
   
   readonly bookingStatus: BookingStatus;
-
 
   /* will booking info be needed as dto since user will enter booking info  */
   
