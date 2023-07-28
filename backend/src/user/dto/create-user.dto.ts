@@ -2,24 +2,20 @@
 
 import { TypeOfSpaceNeeded } from '../schemas/user.schema';
 import { BookingStatus } from '../schemas/booking.schema';
-import { IsOptional, IsEmail, IsEnum, IsDateString, IsNumber, IsNotEmpty, IsString, IsEmpty } from 'class-validator';
+import { IsOptional, IsEmail, IsEnum, IsDateString, IsNumber, IsNotEmpty, IsString, IsEmpty, isEmail } from 'class-validator';
 import { Client } from '../../auth/schemas/client.schema';
+import mongoose from 'mongoose';
+import { Prop } from '@nestjs/mongoose';
 
 /* this will be all the fields expected from user */
 export class CreateUserDto {
-
-  /*
-  @IsNotEmpty()
-  @IsString()
-  readonly name: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  readonly email: string;
-   */
-
+  
   @IsEmpty({ message: 'Cannot pass client id' })
-  readonly client: Client;
+  readonly client: Client; 
+
+  clientEmail: string;
+
+  clientName: string;
 
   @IsOptional()
   readonly company: string;
@@ -40,6 +36,7 @@ export class CreateUserDto {
   @IsDateString()
   readonly bookingEndDate: Date;
   
+  @IsNotEmpty()
   @IsString()
   readonly duration: string;  /* You can use a string to represent hours, days, weeks, etc. */
   

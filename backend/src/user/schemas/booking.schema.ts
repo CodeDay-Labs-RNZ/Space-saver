@@ -1,4 +1,5 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { IsDateString, IsString } from 'class-validator';
 
 export enum BookingStatus {
   CONFIRMED = 'Confirmed',
@@ -14,12 +15,15 @@ export class Booking {
     https://www.npmjs.com/package/react-calendar */
     
   @Prop({ required: true })
+  @IsDateString()
   bookingStartDate: Date;
 
   @Prop({ required: true })
+  @IsDateString()
   bookingEndDate: Date;
 
   @Prop({ required: true })
+  @IsString()
   duration: string; /* You can use a string to represent hours, days, weeks, etc. */
 
   @Prop()
