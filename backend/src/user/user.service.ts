@@ -53,12 +53,19 @@ export class UserService {
     if (!user) {
       throw new NotFoundException("User not found")
     } 
-    console.log(user);
+
     /* Now that the user is found, let's populate the clientName and clientEmail fields */
     const populatedUser = await this.userModel
     .findById(userId)
     .populate({ path: 'client', select: 'name email' })
     .exec();
+
+    console.log(userId);
+    console.log(typeof(userId));
+    console.log(user);
+    console.log(typeof(user));
+    console.log(populatedUser);
+    console.log(typeof(populatedUser));
 
     /* Return the populated user */
     return populatedUser;
