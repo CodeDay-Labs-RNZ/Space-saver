@@ -8,3 +8,10 @@
 body {
     background: var(--color-bg);
 }
+
+/* trying to push to origin, delete when complete */
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
