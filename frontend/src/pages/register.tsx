@@ -72,7 +72,9 @@ function Register() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    /* extra validation for user and password states in cases where button is enabled */
+    /* this is where you'd make a fetch/axios call to register the user and get the response back to log it */
+    
+    /* **temporary** extra validation for user and password states in cases where button is enabled */
     const v1 = USER_REGEX.test(user);
     const v2 = PWD_REGEX.test(password);
     if (!v1 || !v2) {
@@ -82,9 +84,8 @@ function Register() {
     console.log("username: " + user, "password: " + password);
     setSuccess(true);
 
-    /* this is where you'd make a fetch/axios call to register the user and get the response back to log it */
 
-    
+
   }
 
 
