@@ -1,16 +1,16 @@
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    scroll-behavior: smooth;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*    scroll-behavior: smooth;*/
+/*}*/
 
-body {
-    background: var(--color-bg);
-}
+/*body {*/
+/*    background: var(--color-bg);*/
+/*}*/
 
-h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: var(--color-text);
-}
+/*h1 {*/
+/*    font-size: 2rem;*/
+/*    font-weight: 600;*/
+/*    color: var(--color-text);*/
+/*}*/
