@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 
 
@@ -21,8 +22,9 @@ import { AuthModule } from './auth/auth.module';
     }),
     /* passing in .env db uri */
     MongooseModule.forRoot(process.env.MONGO_URI),
-    UserModule,
-    AuthModule
+    // UserModule,
+    AuthModule,
+    BookingsModule
   ],
   controllers: [AppController],
   providers: [AppService],
