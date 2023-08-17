@@ -4,7 +4,7 @@ import CalendarComponent from '../components/CalendarComponent';
 function calendar() {
   return (
     <div>
-      <CalendarComponent />
+      <CalendarComponent onSubmit={() => {}} />
     </div>
   )
 }

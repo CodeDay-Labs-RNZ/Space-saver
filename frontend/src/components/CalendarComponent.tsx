@@ -13,7 +13,13 @@ interface DateType {
   dateTime: Date | null;
 }
 
-function CalendarComponent() {
+interface CalendarComponentProps {
+  onSubmit: (value: DateType) => void
+  /* if want to add additional fields or functions, add below
+    ex: an array or function displaying avaiable days */
+}
+
+function CalendarComponent({onSubmit}: CalendarComponentProps) {
 
   /* handling date/time selection, initially set to null */
   const [date, setDate] = useState<DateType>({
@@ -43,6 +49,16 @@ function CalendarComponent() {
     return times;
   }
 
+
+  const handleTimeSelection = (time: Date) => {
+    /* update state with selected time */
+    setDate((prev) => ({...prev, dateTime: time}));
+
+    /* notify parent component of selection */
+    onSubmit({justDate: date.justDate, dateTime: time});
+  }
+  
+
   const times = getTimes();
 
   return (
@@ -53,7 +69,8 @@ function CalendarComponent() {
            {/* Show available times for selected date  */}
            {times?.map((time, i) => (
             <div key={`time-${i}`} className='rounded-sm bg-gray-100 p-2'>
-              <button type='button' onClick={() => setDate((prev) => ({...prev, dateTime: time}))}>
+              {/* set up a callback to notify parent component of time selection */}
+              <button type='button' onClick={() => handleTimeSelection(time)}>
                 {format(time, 'hh:mm')}
               </button>
             </div>
