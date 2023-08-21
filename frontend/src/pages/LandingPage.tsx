@@ -10,7 +10,7 @@ const LandingPage: React.FC = () => {
                 <h1 className="text-3xl">Welcome to the Landing Page</h1>
             </header>
 
-            <div className="max-w-screen-xl mx-auto flex-grow"> {/* Added max width and centered content */}
+            <div className="max-w-screen-xl mx-auto flex-grow">
                 <section className="p-4">
                     <h2 className="text-2xl">What is AppName?</h2>
                 </section>
