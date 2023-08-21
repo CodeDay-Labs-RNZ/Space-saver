@@ -1,0 +1,36 @@
+/* 
+* Authenticating/authorizing application to access google calendar API using OAuth2
+* Setting up necessary authentication flow, and obtaining and storing access tokens
+
+-import necessary modules
+-define OAuth2 scopes for levels of access to application needs for api
+--ex: const SCOPES = ['https://www.googleapis.com/auth/calendar', ...]
+-add paths to the files storing user tokens(access and refresh tokens), and client credentials (OAuth2 credentials)
+--ex: TOKEN_PATH, CREDENTIALS_PATH
+
+-Create a function that initializes the api authorization then executes callback function
+--will need to read contents of the 'credentials.json' file and handle error
+--check for error while reading for file, then exit with 1 ex: process.exit(1)
+--authorize client with credentials, then call api
+--parse content of 'credentials.json' and use to authorize the application
+
+-Create OAuth2 client with credentials and then executes callback function (pass in credentials(Object), and callback function)
+--destructure relevant properties (ex: installing obj in credentials {const {...} = credentials.installed}<--nodejs)
+--create an OAuth2 client instance using destructured properties
+--rad the saved token from token.json. If error, get a new token
+--set the credentials of OAuth2 client with parsed token
+--call back provided callback function with authorized OAuth2 client
+
+-Get and store new token after promoting for user authorization, and then execute callback with authorized OAuth2 client
+--generate the url for user authorization
+--instruct user to visit generated url for authorization
+--create a readline interface to read user input
+--prompt user to enter the authorization code
+--if error occurs while exchanging and authorization code for access token, log error 
+--set OAuth2 client credentials with the received token
+--if error occurs while writing token to 'token.json', log error-
+--log message, indiciating token has been stored
+-- 
+
+
+*/

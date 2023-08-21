@@ -2,6 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNotEmpty, IsString } from 'class-validator'; 
 import { Document } from 'mongoose';
 
+export enum ClientRole {
+  ADMIN = 'Admin',
+  USER = 'User'
+}
 
 @Schema({
   timestamps: true,
@@ -19,6 +23,10 @@ export class Client extends Document {
   @IsNotEmpty({ message: 'Please add a password' })
   @IsString()
   password: string;
+
+  @Prop({ type: String, enum: ClientRole, default: ClientRole.USER })
+  role: ClientRole;
+
 
 }
 
