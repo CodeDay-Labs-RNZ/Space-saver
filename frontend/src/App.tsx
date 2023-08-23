@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/App.css';
 import './styles/Calendar.css';
-import LandingPage from './components/LandingPage';
+import LandingPage from './pages/LandingPage';
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Contact from "./pages/Contact";
