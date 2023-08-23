@@ -10,7 +10,9 @@ import { add, format } from 'date-fns';
 
 interface DateType {
   justDate: Date | null;
-  dateTime: Date | null;
+  startDateTime: Date | null;
+  endDateTime: Date | null;
+
 }
 
 interface CalendarComponentProps {
@@ -24,10 +26,10 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
   /* handling date/time selection, initially set to null */
   const [date, setDate] = useState<DateType>({
     justDate: null,
-    dateTime: null
+    startDateTime: null,
+    endDateTime: null
   });
 
-  console.log(date.dateTime)
   
   /* getting available times for the selected date */
   const getTimes = () => {
@@ -50,31 +52,86 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
   }
 
 
-  const handleTimeSelection = (time: Date) => {
-    /* update state with selected time */
-    setDate((prev) => ({...prev, dateTime: time}));
+  const handleTimeSelection = (time: Date, type: 'start-time' | 'end-time') => {
+    if (type === 'start-time') {
+      setDate((prev) => ({...prev, startDateTime: time}));
+    } else {
+      setDate((prev) => ({...prev, endDateTime: time}));
+    }
 
+  }
+  
+  const handleSubmit = () => {
     /* notify parent component of selection */
-    onSubmit({justDate: date.justDate, dateTime: time});
+    if (date.startDateTime && date.endDateTime) {
+      onSubmit({
+        justDate: date.justDate,
+        startDateTime: date.startDateTime,
+        endDateTime: date.endDateTime
+      })
+    } else {
+      alert("Please select both start and end times");
+    }
   }
   
 
   const times = getTimes();
 
+
+  const dropdownStyle = {
+    padding: '10px',
+    margin: '10px',
+    fontSize: '16px',
+  }
+
+  const submitButtonStyle = {
+    backgroundColor: 'blue',
+    padding: '10px 20px',
+    margin: '10px',
+    color: 'white',
+    border: 'none',
+    cursor: 'pointer'
+  }
+
+
   return (
     <div className='h-screen flex flex-col justify-center items-center'>
       {/* when a user has only select a date, we want to show them available times */}
       {date.justDate ? (
-        <div className='flex gap-4'>
-           {/* Show available times for selected date  */}
-           {times?.map((time, i) => (
-            <div key={`time-${i}`} className='rounded-sm bg-gray-100 p-2'>
-              {/* set up a callback to notify parent component of time selection */}
-              <button type='button' onClick={() => handleTimeSelection(time)}>
-                {format(time, 'hh:mm')}
-              </button>
-            </div>
-           ))}
+        <div className='flex flex-col gap-4'>
+          <div>
+
+            {/* dropdown for selecting start or end time */}
+            <label>
+              Start Time:
+              <select
+                style={dropdownStyle}
+                onChange={(e) => handleTimeSelection(new Date(e.target.value), 'start-time')}>
+                <option value=''>Start Time</option>
+                  {times?.map((time, i) => (
+                    <option key={`start-time-${i}`} value={time.toISOString()}>
+                      {format(time, 'hh:mm')}
+                    </option>
+                  ))}
+              </select>
+            </label>
+
+            <label>
+              End Time:
+              <select 
+                style={dropdownStyle}
+                onChange={(e) => handleTimeSelection(new Date(e.target.value), 'end-time')}>
+                <option value=''>End Time</option>
+                {times?.map((time, i) => (
+                  <option key={`end-time-${i}`} value={time.toISOString()}>
+                    {format(time, 'hh:mm')}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <button style={submitButtonStyle} onClick={handleSubmit}>Submit</button>
+          </div>
         </div>
       ) : ( 
         <ReactCalendar minDate={new Date()} 

@@ -4,7 +4,8 @@ import CalendarComponentRangeOfDays from '../components/CalendarComponentRangeOf
 
 interface DateType {
   justDate: Date | null;
-  dateTime: Date | null;
+  startDateTime: Date | null;
+  endDateTime: Date | null;
 }
 
 interface DateRange {
@@ -25,7 +26,8 @@ function CalendarPage() {
   /* logging user's selection for booking date(s) (will need to be passed to backend) */
   const handleSingleBookingSubmit = (datetype: DateType) => {
     console.log('Selected Time:', datetype.justDate);
-    console.log('Selected Date:', datetype.dateTime);
+    console.log('Start Time:', datetype.startDateTime);
+    console.log('End Time:', datetype.endDateTime);
     setBookingType(null);
   }
 
