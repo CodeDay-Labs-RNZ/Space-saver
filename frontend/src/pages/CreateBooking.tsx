@@ -1,5 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import CalendarPage from './CalendarPage';
+import * as yup from 'yup';
 
 
 /* data types for booking data */
@@ -25,6 +26,20 @@ interface FormData {
   attendees: string;
   reminder: boolean;
 }
+
+/* validation schema definiton */
+const bookingValidationSchema = yup.object().shape({
+  clientName: yup.string(),
+  clientEmail: yup.string().email('Invalid email').required('Client email is required'),
+  company: yup.string().required('Company is required'),
+  typeOfSpaceNeeded: yup.string().required('Type of space needed is required'),
+  attendees: yup.string().required('Attendees is required'),
+  reminder: yup.boolean(),
+  startDate: yup.date().nullable().required('Start date is required'),
+  endDate: yup.date().nullable().required('End date is required'),
+  startTime: yup.date().nullable().required('Start time is required'),
+  endTime: yup.date().nullable().required('End time is required')
+})
 
 
 export function CreateBooking() {
@@ -56,11 +71,71 @@ export function CreateBooking() {
   }
 
   /* handling form submission */
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
 
     /* validate formData based on bookingSchema and bookingDetailsSchema,
     then send formData and bookingData to backend */
+    
+
+    /* checking if date variables are date objecst */
+    if (startDate instanceof Date && startTime instanceof Date && endDate instanceof Date && endTime instanceof Date) {
+      const payload = {
+        clientName: formData.clientName,
+        clientEmail: formData.clientEmail,
+        company: formData.company,
+        typeOfSpaceNeeded: formData.typeOfSpaceNeeded,
+        reminder: formData.reminder,
+        attendees: formData.attendees,
+        startDate: startDate.getTime(),
+        endDate: endDate.getTime(),
+        startTime: startTime.getTime(),
+        endTime: endTime.getTime(),
+      }
+
+      
+      /* convert unix timestamps back to date objects for validation */
+      const payloadWithDates = {
+        ...payload,
+        startDate: startDate ? new Date(payload.startDate as number) : null,
+        endDate: endDate ? new Date(payload.endDate as number) : null,
+        startTime: startTime ? new Date(payload.startTime as number) : null,
+        endTime: endTime ? new Date(payload.endTime as number) : null,
+      }
+      
+      
+      const api = 'http://localhost:3001/bookings';
+      
+      try {
+        
+        /* validate payload against schema */
+        console.log("Payload before validation:", payload)
+        console.log("Form data before validation:", formData)
+        console.log("Payload with dates before validation:", payloadWithDates)
+        await bookingValidationSchema.validate(payloadWithDates);
+        
+        const response = await fetch(api, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
+        
+        if (response.ok) {
+          console.log('Booking created successfully');
+        } else {
+          console.log('Failed to create booking');        
+        }
+        
+      } catch (error) {
+        console.error('Error: ', error);
+      }
+
+    } else {
+      console.error('One of the date variables is not a Date object')
+    }
     
   }
 
@@ -79,18 +154,26 @@ export function CreateBooking() {
       const parseData = JSON.parse(saveBookingData) as DateType | DateRange;
       setBookingData(parseData);
 
+      /* safely converting to date object */
+      const safeDateConversion = (date: Date | null | string) => {
+        if (typeof date === 'string') {
+          return new Date(date);
+        }
+        return date;
+      }
+
       /* populate start and end dates/times based on bookingData */
       if ('justDate' in parseData) {
-        setStartDate(parseData.justDate);
+        setStartDate(safeDateConversion(parseData.justDate));
         /* setting end date same as start date for single-day booking */
-        setEndDate(parseData.justDate);
-        setStartTime(parseData.startDateTime);
-        setEndTime(parseData.endDateTime);
+        setEndDate(safeDateConversion(parseData.justDate));
+        setStartTime(safeDateConversion(parseData.startDateTime));
+        setEndTime(safeDateConversion(parseData.endDateTime));
       } else {
-        setStartDate(parseData.startDate);
-        setEndDate(parseData.endDate);
-        setStartTime(parseData.startTime);
-        setEndTime(parseData.endTime);
+        setStartDate(safeDateConversion(parseData.startDate));
+        setEndDate(safeDateConversion(parseData.endDate));
+        setStartTime(safeDateConversion(parseData.startTime));
+        setEndTime(safeDateConversion(parseData.endTime));
       }
     }
   }, []);
