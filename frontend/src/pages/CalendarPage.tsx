@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import CalendarComponent from '../components/CalendarComponent';
 import CalendarComponentRangeOfDays from '../components/CalendarComponentRangeOfDays';
 
 interface DateType {
   justDate: Date | null;
-  dateTime: Date | null;
+  startDateTime: Date | null;
+  endDateTime: Date | null;
 }
 
 interface DateRange {
@@ -14,7 +16,14 @@ interface DateRange {
   endTime: Date | null;
 }
 
-function CalendarPage() {
+interface CalendarPageProps {
+  onBookingData: (value: DateType | DateRange) => void;
+}
+
+
+function CalendarPage({onBookingData}: CalendarPageProps) {
+
+  const navigate = useNavigate();
 
   const [bookingType, setBookingType] = useState<'single' | 'multi' | null>(null);
 
@@ -25,7 +34,12 @@ function CalendarPage() {
   /* logging user's selection for booking date(s) (will need to be passed to backend) */
   const handleSingleBookingSubmit = (datetype: DateType) => {
     console.log('Selected Time:', datetype.justDate);
-    console.log('Selected Date:', datetype.dateTime);
+    console.log('Start Time:', datetype.startDateTime);
+    console.log('End Time:', datetype.endDateTime);
+
+    localStorage.setItem('bookingData', JSON.stringify(datetype));
+    onBookingData(datetype); /* pass data to CreateBooking */
+    navigate('/booking'); /* navigate to booking form page */
     setBookingType(null);
   }
 
@@ -34,6 +48,10 @@ function CalendarPage() {
     console.log('Start Time:', dateRange.startTime);
     console.log('End Date:', dateRange.endDate);
     console.log('End Time:', dateRange.endTime);
+
+    localStorage.setItem('bookingData', JSON.stringify(dateRange));
+    onBookingData(dateRange); /* pass data to CreateBooking */
+    navigate('/booking'); /* navigate to booking form page */
     setBookingType(null);
   }
 

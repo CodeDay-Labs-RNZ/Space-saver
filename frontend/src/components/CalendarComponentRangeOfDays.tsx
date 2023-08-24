@@ -56,15 +56,42 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
 
   const handleEndTimeSelection = (time: Date) => {
     setDate((prev) => ({...prev, endTime: time}));
-    onSubmit(date); /* notifying parent component of selection */
   }
-
-
+  
   const startTimes = getTimes(date.startDate);
   const endTimes = getTimes(date.endDate);
+  
+  const handleSubmit = () => {
+    if (date.startTime && date.endTime) {
+      /* notifying parent component of selection */
+      onSubmit(date);
+    } else {
+      alert("Please select start and end times");
+    }
+  }
 
+  const labelStyle = {
+    marginRight: '10px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: '#333',
+    alignSelf: 'center'
+  }
 
+  const dropdownStyle = {
+    padding: '10px',
+    margin: '5px',
+    fontSize: '15px'
+  }
 
+  const submitButtonStyle = {
+    backgroundColor: 'blue',
+    padding: '10px 20px',
+    margin: '10px',
+    color: 'white',
+    border: 'none',
+    cursor: 'pointer'
+  }
 
   return (
     <div className='h-screen flex flex-col justify-center items-center'>
@@ -73,30 +100,53 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
           onClickDay={handleStartDateSelection}
         />
       ) : !date.startTime ? (
-        <div className='flex gap-4'>
-          {startTimes?.map((time, i) => (
-            <button key={`start-time-${i}`} type='button' onClick={() => handleStartTimeSelection(time)}>
-                {format(time, 'hh:mm')}
-            </button>
-          ))}
+        <div className='flex align-items-center gap-4'>
+          <label htmlFor='start-time' style={labelStyle}>Start Time:</label>
+          <select 
+            id='start-time'
+            style={dropdownStyle} 
+            value={(date.startTime as Date | null)?.toISOString() || ""}
+            onChange={(e) => handleStartTimeSelection(new Date(e.target.value))}
+          >
+            <option value="" disabled selected>Start Time</option>
+              {startTimes?.map((time, i) => (
+                <option key={`start-time-${i}`} value={time.toISOString()}>
+                  {format(time, 'hh:mm')}
+                </option>
+              ))}
+          </select>
         </div>
       ) : !date.endDate ? (
         <ReactCalendar minDate={date.startDate} 
           onClickDay={handleEndDateSelection}
         />
       ) : !date.endTime ? (
-        <div className='flex gap-4'> 
-          {endTimes?.map((time, i) => (
-            <button key={`end-time-${i}`} type='button' onClick={() => handleEndTimeSelection(time)}>
-              {format(time, 'hh:mm')}
-            </button>
-          ))}
+        <div className='flex align-items-center gap-4'> 
+        <label htmlFor='end-time' style={labelStyle}>End Time:</label>
+          <select 
+            id='end-time'
+            style={dropdownStyle} 
+            value={(date.endTime as Date | null)?.toISOString() || ""}
+            onChange={(e) => handleEndTimeSelection(new Date(e.target.value))}
+          >
+            <option value="" disabled selected>End Time</option>        
+              {endTimes?.map((time, i) => (
+                <option key={`end-time-${i}`} value={time.toISOString()}>
+                  {format(time, 'hh:mm')}
+                </option>
+                ))}
+          </select>
         </div>
       ) : (
         <div>Your booking is set</div>
       )}
+
+      {date.endTime && (
+        <button style={submitButtonStyle} onClick={handleSubmit}>Submit</button>
+      )}
     </div>
   )
+
 }
 
 export default CalendarComponentRangeOfDays
