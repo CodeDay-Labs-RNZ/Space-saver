@@ -85,7 +85,7 @@ export function CreateBooking() {
         clientName: formData.clientName,
         clientEmail: formData.clientEmail,
         company: formData.company,
-        typeOfSpaceNeeded: formData.typeOfSpaceNeeded,
+        typeOfSpaceNeeded: formData.typeOfSpaceNeeded.trim(),
         reminder: formData.reminder,
         attendees: formData.attendees,
         startDate: startDate.getTime(),
@@ -94,7 +94,6 @@ export function CreateBooking() {
         endTime: endTime.getTime(),
       }
 
-      
       /* convert unix timestamps back to date objects for validation */
       const payloadWithDates = {
         ...payload,
@@ -111,7 +110,6 @@ export function CreateBooking() {
         
         /* validate payload against schema */
         console.log("Payload before validation:", payload)
-        console.log("Form data before validation:", formData)
         console.log("Payload with dates before validation:", payloadWithDates)
         await bookingValidationSchema.validate(payloadWithDates);
         
@@ -268,9 +266,9 @@ export function CreateBooking() {
               onChange={handleInputChange}
             >
               <option value=''>Select Type</option>
-              <option value='ROOMRENTAL'>Rent A Room</option>
-              <option value='DESKRENTAL'>Rent A Desk</option>
-              <option value='FLOORRENTAL'>Rent A Floor</option>
+              <option value='Rent A Room'>Rent A Room</option>
+              <option value='Rent A Desk'>Rent A Desk</option>
+              <option value='Rent A Floor'>Rent A Floor</option>
             </select>
         </div>
 

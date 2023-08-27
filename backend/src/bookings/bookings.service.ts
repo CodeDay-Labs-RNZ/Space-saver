@@ -50,6 +50,7 @@ export class BookingsService {
 
   /* todo: ensure these check is working, currently not working */
   /* querying the db for bookings that overlap with desired date/time */
+  /* implement a function to check if future booking is available  */  
   async isBookingAvailable(startDate: string, startTime: string, 
                           endDate: string, endTime: string,): Promise<Boolean> {
 
