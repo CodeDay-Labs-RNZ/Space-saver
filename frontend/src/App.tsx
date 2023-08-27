@@ -21,7 +21,6 @@ function App() {
               <Route path='/login' element={<Login/>}/>
               <Route path='/dashboard' element={<Dashboard/>}/>
             {/*<Route path='/services' element={<Services/>}/>*/}
-
               <Route path='/booking' element={<CreateBooking/>}/>
               <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
               <Route path='/contact' element={<Contact/>}/>
