@@ -1,6 +1,10 @@
 import React from 'react';
 
 const Dashboard: React.FC = () => {
+
+    /* add buttons that will route to a new page creating a booking for user */
+
+
     return (
         <form className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
             <div className="space-y-6">
