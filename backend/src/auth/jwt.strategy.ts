@@ -4,6 +4,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { Model } from "mongoose";
 import { Client } from "./schemas/client.schema"
+import { AuthService } from "./auth.service";
 
 
 
@@ -11,7 +12,8 @@ import { Client } from "./schemas/client.schema"
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectModel(Client.name)
-    private clientModel: Model<Client>
+    private clientModel: Model<Client>,
+    private readonly authService: AuthService
   ) {
     super({
       /* extracting bearer header from token */ 
@@ -24,6 +26,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload) {
     /* getting id from token payload */ 
     const { id } = payload;
+
+    /* extract token and check if token is blacklisted */
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken();
+    if (this.authService.isTokenBlacklisted(token)) {
+      throw new UnauthorizedException('Token has been invalidated')
+    }
     
     /* checking if exists and throwing error if doesn't exist */ 
     const client = await this.clientModel.findById(id);
