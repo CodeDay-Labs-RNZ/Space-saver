@@ -68,7 +68,7 @@ export class AuthService {
     if (!client.password) {
       throw new InternalServerErrorException('Client password is missing.');
     }
-
+ 
     /* if client exists, check password with password in db */
     const isPasswordMatched = await bcrypt.compare(password, client.password);
     if (!isPasswordMatched) {
@@ -78,6 +78,19 @@ export class AuthService {
     const token = this.jwtService.sign({ id: client._id })
 
     return { token };
+  }
+
+
+  /* adding a set to store blacklisted tokens */
+  private readonly blacklistedTokens = new Set<string>();
+
+  /* adding a method to blacklist a token and checking token */
+  blacklistToken(token: string): void {
+    this.blacklistedTokens.add(token);
+  }
+
+  isTokenBlacklisted(token: string): boolean {
+    return this.blacklistedTokens.has(token);
   }
 
 
