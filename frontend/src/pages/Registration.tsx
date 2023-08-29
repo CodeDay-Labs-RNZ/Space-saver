@@ -1,6 +1,8 @@
 import { faCheck, faInfoCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
 const styles = require('../styles/Register.css');
 
 
@@ -9,9 +11,13 @@ const styles = require('../styles/Register.css');
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{4,24}$/;
+const REGISTER_URL = '/auth/signup';
 
 
 const Register: React.FC = () => {
+
+  const navigate = useNavigate();
+
   /* useRef is for user input, 
   errRef is for error msgs putting focus on it for screen reader */
   const userInputRef = useRef<HTMLInputElement | null>(null);
@@ -40,7 +46,7 @@ const Register: React.FC = () => {
   const [errMsg, setErrMsg] = useState<string>('');
   const [success, setSuccess] = useState<Boolean>(false);
 
-
+ 
   useEffect(() => {
     /* first time useEffect is called, focus is on user input when component loads */
     emailInputRef.current?.focus();
@@ -62,15 +68,11 @@ const Register: React.FC = () => {
   useEffect(() => {
     /*  USER_REGEX.test(...) <- testing user state to regex we've defined */
     const result = EMAIL_REGEX.test(email);
-    console.log(result);
-    console.log(email);
     setValidEmail(result);
   }, [email]);
 
   useEffect(() => {
     const result = PWD_REGEX.test(password);
-    console.log(result);
-    console.log(password);
     /* confirming password to match password state and checking if true/false */
     /* anytime result/match changes, validPwdMatch will check if field has changed */
     setValidPwd(result);
@@ -87,9 +89,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    /* this is where you'd make a fetch/axios call to register the user and get the response back to log it */
-    
-    /* **temporary** extra validation for user and password states in cases where button is enabled */
+    // extra validation for user and password states in cases where js hack button is enabled 
     const v1 = USER_REGEX.test(username);
     const v2 = EMAIL_REGEX.test(email);
     const v3 = PWD_REGEX.test(password);
@@ -97,8 +97,48 @@ const Register: React.FC = () => {
       setErrMsg("Invalid Entry");
       return;
     }
-    console.log("username: " + username, "email: " + email, "password: " + password);
-    setSuccess(true);
+
+    try {
+      /* destructuring props (username, email, password) */
+      const response = await axios.post(REGISTER_URL, 
+        JSON.stringify({ name: username, email, password }), 
+        {
+          headers: { 'Content-Type': 'application/json' }, 
+          withCredentials: true
+        });
+
+      console.log(response.data.accessToken); 
+      console.log(JSON.stringify(response));
+      const accessToken = response.data.accessToken;
+      
+      /* clear input fields then set success to true */
+      setUserName('');
+      setEmail('');
+      setPassword('');
+      setMatchPwd('');
+      setSuccess(true);
+
+      /* navigate to login after registering */
+      navigate('/login')
+
+    } catch (error: any) {
+      let msg = 'Registration failed';
+      if ('response' in error) {
+        if (error.response.status === 409) {
+          msg = 'Email already taken'
+        } else if (error.response.status === 400) {
+          msg = 'Bad Request';
+        } else {
+          msg = 'Server Error';
+        }
+      } else if (error.request) {
+        msg = 'No Server Response'
+      } else {
+        msg = 'An error occurred'
+      }
+      setErrMsg(msg)
+      errRef.current?.focus();
+    }
 
   }
 

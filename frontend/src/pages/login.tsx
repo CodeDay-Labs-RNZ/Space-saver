@@ -1,8 +1,17 @@
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 const styles = require('../styles/Register.css');
+
+const LOGIN_URL = '/auth/signin';
 
 
 const Login: React.FC = () => {
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const emailInputRef = useRef<HTMLInputElement | null>(null);
   const errRef = useRef<HTMLInputElement | null>(null);
 
@@ -23,11 +32,40 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    try {
+      const response = await axios.post(LOGIN_URL, {      
+        email: userEmail,
+        password: password
+      });
+      console.log(response.data.accessToken); 
+      console.log(JSON.stringify(response));
+      const accessToken = response.data.accessToken;
+      login(accessToken);
+      /* clear form fields and set success to true */
+      setUserEmail('');
+      setPassword('');
+      setSuccess(true);
+      /* navigate to dashboard */
+      navigate('/dashboard');
 
-    /* fetch call to backend to login (ask questions about tokens) */
-    setUserEmail('');
-    setPassword('');
-    setSuccess(true);
+    } catch (error: any) {
+      let msg = 'Registration failed';
+      if ('response' in error) {
+        if (error.response.status === 409) {
+          msg = 'Email already taken'
+        } else if (error.response.status === 400) {
+          msg = 'Bad Request';
+        } else {
+          msg = 'Server Error';
+        }
+      } else if (error.request) {
+        msg = 'No Server Response'
+      } else {
+        msg = 'An error occurred'
+      }
+      setErrMsg(msg)
+      errRef.current?.focus();
+    }
     
   }
 
@@ -53,7 +91,7 @@ const Login: React.FC = () => {
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"
                 type="email"
                 id="email"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 ref={emailInputRef}
                 autoComplete='off'
                 onChange={(e) => setUserEmail(e.target.value)}
