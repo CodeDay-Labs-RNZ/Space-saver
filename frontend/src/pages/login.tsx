@@ -24,6 +24,7 @@ const Login: React.FC = () => {
     e.preventDefault();
 
 
+    /* fetch call to backend to login (ask questions about tokens) */
     setUserEmail('');
     setPassword('');
     setSuccess(true);
