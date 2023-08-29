@@ -8,7 +8,6 @@ const Dashboard: React.FC = () => {
     return (
         
         <div>
-            <LogoutButton />
             <form className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
                 <div className="space-y-6">
                     <div className="border-b border-gray-300 pb-6">
