@@ -4,8 +4,8 @@ import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 const styles = require('../styles/Register.css');
 
-const LOGIN_URL = '/auth/signin';
 
+const LOGIN_URL = '/auth/signin';
 
 const Login: React.FC = () => {
 
@@ -47,9 +47,10 @@ const Login: React.FC = () => {
       const payload = JSON.parse(window.atob(base64));
       const username = payload.username;
       const email = payload.email;
+      const clientId = payload.id;
 
-      login(accessToken, username, email);
-      console.log('Received token:', accessToken, 'username:', username, 'email:', email)
+      login(accessToken, username, email, clientId);
+      console.log('Received token:', accessToken, 'username:', username, 'email:', email, 'clientId:', clientId)
       /* clear form fields and set success to true */
       setUserEmail('');
       setPassword('');

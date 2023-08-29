@@ -1,8 +1,11 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import CalendarPage from './CalendarPage';
+import axios from '../api/axios';
 import * as yup from 'yup';
 
+
+const BOOKING_URL = '/bookings';
 
 /* data types for booking data */
 interface DateType {
@@ -46,7 +49,7 @@ const bookingValidationSchema = yup.object().shape({
 export function CreateBooking() {
 
   /* capture additional booking details by grabbing user's info from backend before submitting form */
-  const { username, email } = useAuth();
+  const { username, email, clientId } = useAuth();
 
   const [bookingData, setBookingData] = useState<DateType | DateRange | null>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -84,6 +87,7 @@ export function CreateBooking() {
     /* checking if date variables are date objecst */
     if (startDate instanceof Date && startTime instanceof Date && endDate instanceof Date && endTime instanceof Date) {
       const payload = {
+        clientId,
         clientName: formData.clientName,
         clientEmail: formData.clientEmail,
         company: formData.company,
@@ -106,24 +110,27 @@ export function CreateBooking() {
       }
       
       
-      const api = 'http://localhost:3001/bookings';
-      
       try {
         
         /* validate payload against schema */
-        console.log("Payload before validation:", payload)
-        console.log("Payload with dates before validation:", payloadWithDates)
+        console.log("Payload with dates:", payloadWithDates)
         await bookingValidationSchema.validate(payloadWithDates);
-        
-        const response = await fetch(api, {
-          method: 'POST',
+
+        const token = localStorage.getItem('accessToken');
+        const config = {
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            clientId: clientId,
           },
-          body: JSON.stringify(payload),
-        })
+        };
+
+        console.log("Token:", token)
+        console.log("Headers:", config.headers)
+        console.log("Payload:", payload)
         
-        if (response.ok) {
+        const response = await axios.post(BOOKING_URL, payload, config)
+
+        if (response.status === 201) {
           console.log('Booking created successfully');
         } else {
           console.log('Failed to create booking');        
@@ -236,6 +243,7 @@ export function CreateBooking() {
               name='clientName'
               value={formData.clientName}
               onChange={handleInputChange}
+              readOnly
             />
         </div>
         <div>
@@ -246,6 +254,7 @@ export function CreateBooking() {
               name='clientEmail'
               value={formData.clientEmail}
               onChange={handleInputChange}
+              readOnly
             />
         </div>
 

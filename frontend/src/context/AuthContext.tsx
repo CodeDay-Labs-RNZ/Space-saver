@@ -1,10 +1,19 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
+
+/* utility function checking if token is expired */
+const isTokenExpired = (decoded: DecodedToken) => {
+  const currTime = Date.now() / 1000;
+  return decoded.exp < currTime;
+}
+
+
 interface AuthContextProps {
   isAuthenticated: boolean;
   username: string | null;
   email: string | null;
-  login: (token: string, username: string, email: string) => void;
+  clientId: string | null;
+  login: (token: string, username: string, email: string, clientId: string) => void;
   logout: () => void;
 }
 
@@ -17,6 +26,7 @@ interface AuthProviderProps {
 interface DecodedToken {
   username: string;
   email: string;
+  id: string;
   iat: number;  // issued at
   exp: number;  // expiration time
   // ... any other fields that might be in the token
@@ -43,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('Token'));
   const [username, setUserName] = useState<string | null>(null);
   const [email, setUserEmail] = useState<string | null>(null);
+  const [clientId, setClientId] = useState<string | null>(null);
   
   const isAuthenticated = !!accessToken
 
@@ -50,12 +61,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const decoded = decodeJWT(token);
       console.log("Decoded JWT:", decoded)
-      if (decoded && decoded.username && decoded.email) {
+      if (decoded && decoded.username && decoded.email && decoded.id) {
         localStorage.setItem('Token', token);
         setAccessToken(token);
         setUserName(decoded.username);
         setUserEmail(decoded.email);
-        console.log('Updated state:', {token, username: decoded.username, email: decoded.email});
+        setClientId(decoded.id);
+        console.log('Updated state:', {token, username: decoded.username, email: decoded.email, id: decoded.id});
       } else {
         console.error('JWT did not contain username or email')
       }
@@ -67,8 +79,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     if (accessToken) {
       const decoded = decodeJWT(accessToken);
-      setUserName(decoded.username);
-      setUserEmail(decoded.email);
+      /* checking if token is expired */
+      if (isTokenExpired(decoded)) {
+        logout();
+      } else {
+        setUserName(decoded.username);
+        setUserEmail(decoded.email);
+        setClientId(decoded.id);
+      }
     }
   }, [accessToken]);
 
@@ -84,6 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     username, 
     email, 
+    clientId,
     login, 
     logout, 
   }
