@@ -11,7 +11,7 @@ export class BookingsController {
   /* inject user service here */
   constructor(private bookingsService: BookingsService) {}
 
-  /* GET, all bookings */
+  /* GET, all bookings */ 
   @Get()
   @UseGuards(AuthGuard())
   async getAllBookings(): Promise<Booking[]> {

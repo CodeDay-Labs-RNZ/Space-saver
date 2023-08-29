@@ -1,13 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+const styles = require('../styles/Dashboard.css');
 
 const Dashboard: React.FC = () => {
     /* add buttons that will route to a new page creating a booking for user */
 
+    const navigate = useNavigate();
+    const [showBookingOptions, setShowBookingOptions] = useState(false);
+
+
+    /* function to handle create booking */
+    const handleCreateBooking = (type: string) => {
+        /* navigate to calendar page and pass the type of booking as state */
+        navigate('/calendar', { state: { type } });
+    }
+
+    /* function to handle update/delete booking */
+    const handleUpdateDeleteBooking = (event: React.MouseEvent<HTMLButtonElement>) => {
+        /* todo: navigate to update/delete page (implement page) */
+        //navigate('/update-delete-bookings')
+    }
+
+
     return (
-        
         <div>
+            <div className='booking-info'>
+                <div className='current-booking'>
+                    {/* display current booking */}
+                    Current Booking: {/* fetch and display from backend */}
+                </div>
+                <div className='most-recent-booking'>
+                    {/* display most recent booking */}
+                    Most Recent Booking: {/* fetch and display from backend */}
+                </div>
+            </div>
+
+            <div className='booking-actions'>
+
+                {!showBookingOptions? (
+                    <>
+                        <button className='button-style' onClick={() => setShowBookingOptions(true)}>Create New Booking</button>
+                        <button className='button-style' onClick={() => handleUpdateDeleteBooking}>Update/Delete Booking</button>
+                    </>
+                ) : (
+                    <>
+                        <button className='button-style' onClick={() => handleCreateBooking('room')}>Book A Room</button>
+                        <button className='button-style' onClick={() => handleCreateBooking('desk')}>Book A Desk</button>
+                        <button className='button-style' onClick={() => handleCreateBooking('floor')}>Book A Floor</button>
+                        <button className='button-style' onClick={() => setShowBookingOptions(false)}>Cancel</button>
+                    </>
+                )}
+            </div>
+
             <form className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
                 <div className="space-y-6">
                     <div className="border-b border-gray-300 pb-6">
