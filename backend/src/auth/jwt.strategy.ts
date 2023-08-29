@@ -28,8 +28,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const { id } = payload;
 
     /* extract token and check if token is blacklisted */
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken();
-    if (this.authService.isTokenBlacklisted(token)) {
+    // const token = ExtractJwt.fromAuthHeaderAsBearerToken();
+    if (this.authService.isTokenBlacklisted(id)) {
       throw new UnauthorizedException('Token has been invalidated')
     }
     
@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Login first to access')
     }
 
-    return client;
+    return { id: client._id, username: client.name, email: client.email};
   }
 
 }
