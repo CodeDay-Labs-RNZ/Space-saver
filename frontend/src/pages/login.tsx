@@ -37,10 +37,19 @@ const Login: React.FC = () => {
         email: userEmail,
         password: password
       });
-      console.log(response.data.accessToken); 
+
       console.log(JSON.stringify(response));
-      const accessToken = response.data.accessToken;
-      login(accessToken);
+      const accessToken = response.data.token;
+
+      /* decoding token to get username/email */
+      const base64Url = accessToken.split('.')[1];
+      const base64 = base64Url.replace('-', '+').replace('_', '/');
+      const payload = JSON.parse(window.atob(base64));
+      const username = payload.username;
+      const email = payload.email;
+
+      login(accessToken, username, email);
+      console.log('Received token:', accessToken, 'username:', username, 'email:', email)
       /* clear form fields and set success to true */
       setUserEmail('');
       setPassword('');

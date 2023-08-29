@@ -1,4 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import CalendarPage from './CalendarPage';
 import * as yup from 'yup';
 
@@ -45,12 +46,13 @@ const bookingValidationSchema = yup.object().shape({
 export function CreateBooking() {
 
   /* capture additional booking details by grabbing user's info from backend before submitting form */
+  const { username, email } = useAuth();
 
   const [bookingData, setBookingData] = useState<DateType | DateRange | null>(null);
   const [formData, setFormData] = useState<FormData>({
     /* grab client name and email from backend */
-    clientName: '',
-    clientEmail: '',
+    clientName: username || '',
+    clientEmail: email || '',
     company: '',
     typeOfSpaceNeeded: '',
     attendees: '',
