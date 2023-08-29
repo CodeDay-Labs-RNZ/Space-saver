@@ -8,6 +8,7 @@ import Contact from "./pages/Contact";
 import Registration from "./pages/Registration";
 import Calendar from "./pages/CalendarPage";
 import CreateBooking from './pages/CreateBooking';
+import { AuthProvider } from './context/AuthContext';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 // testing new branch creation
@@ -15,21 +16,22 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 function App() {
   return (
     <div className="App">
-      <React.Fragment>
-        <Router>
-            <Routes>
-              <Route path='/' element={<LandingPage/>}/>
-              <Route path='/login' element={<Login/>}/>
-              <Route path='/dashboard' element={<Dashboard/>}/>
-            {/*<Route path='/services' element={<Services/>}/>*/}
-
-              <Route path='/booking' element={<CreateBooking/>}/>
-              <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
-              <Route path='/contact' element={<Contact/>}/>
-              <Route path='/registration' element={<Registration/>}/>
-            </Routes>
-        </Router>
-      </React.Fragment>
+      <AuthProvider>
+        <React.Fragment>
+          <Router>
+              <Routes>
+                <Route path='/' element={<LandingPage/>}/>
+                <Route path='/login' element={<Login/>}/>
+                <Route path='/registration' element={<Registration/>}/>
+                <Route path='/dashboard' element={<Dashboard/>}/>
+                <Route path='/booking' element={<CreateBooking/>}/>
+                <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
+                <Route path='/contact' element={<Contact/>}/>
+              {/*<Route path='/services' element={<Services/>}/>*/}
+              </Routes>
+          </Router>
+        </React.Fragment>
+      </AuthProvider>
     </div>
   );
 }
