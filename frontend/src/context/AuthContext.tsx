@@ -43,6 +43,7 @@ const decodeJWT = (token: string): DecodedToken => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+  console.log('Context in useAuth', context);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
@@ -50,7 +51,9 @@ export const useAuth = () => {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem('Token'));
+  const [accessToken, setAccessToken] = useState<string | null>(
+    () => localStorage.getItem('Token')
+  );
   const [username, setUserName] = useState<string | null>(null);
   const [email, setUserEmail] = useState<string | null>(null);
   const [clientId, setClientId] = useState<string | null>(null);
@@ -62,6 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const decoded = decodeJWT(token);
       console.log("Decoded JWT:", decoded)
       if (decoded && decoded.username && decoded.email && decoded.id) {
+        console.log('Setting access token:', token);
         localStorage.setItem('Token', token);
         setAccessToken(token);
         setUserName(decoded.username);
@@ -89,6 +93,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     }
   }, [accessToken]);
+
+  useEffect(() => {
+    console.log('ClientId and Token in CreateBooking:', clientId, accessToken);
+  }, [])
 
 
   const logout = () => {

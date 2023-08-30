@@ -25,6 +25,7 @@ export class BookingsController {
   @Post()
   @UseGuards(AuthGuard())
   async createNewBooking(@Body() booking: CreateBookingDto, @Req() req): Promise<Booking> {
+    // console.log('request.user in controller:', req.user);
     return this.bookingsService.create(booking, req.user);
   }
 

@@ -1,8 +1,10 @@
 import { TypeOfSpaceNeeded } from '../schemas/bookings.schema';
 import { BookingStatus } from '../schemas/bookingDetails.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsOptional, IsEmail, IsEnum, IsDateString, IsString, IsEmpty, isEmail, IsDate, IsTimeZone, IsBoolean } from 'class-validator';
+import { IsOptional, IsEmail, IsEnum, IsString, IsEmpty, IsBoolean, IsNotEmpty, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Client } from '../../auth/schemas/client.schema';
+import { BookingDetailsDto } from './booking-details.dto';
 
 
 export class UpdateBookingDto {
@@ -25,31 +27,11 @@ export class UpdateBookingDto {
   @IsOptional()
   @IsEnum(TypeOfSpaceNeeded, { message: 'Please enter valid option'})
   typeOfSpaceNeeded: TypeOfSpaceNeeded;
-    
-  @IsOptional()
-  @IsString()
-  bookingStartDate: string;
 
-  @IsOptional()
-  @IsTimeZone()
-  bookingStartTime: string
-
-  @IsOptional()
-  @IsString()
-  bookingEndDate: string;
-
-  @IsOptional()
-  @IsTimeZone()
-  bookingEndTime: string
-
-  @IsOptional()
-  @IsEmail()
-  attendees: string;
-
-  /* need to create a function that calculates the reminder dates and times based on duration */
-  @IsOptional()
-  @IsBoolean()
-  reminder: boolean;
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => BookingDetailsDto)
+  bookings?: BookingDetailsDto[];
 
   /* todo: activate this field when a user has created/updated/deleted a booking */
   /*

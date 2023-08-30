@@ -5,6 +5,7 @@ import * as mongoose from 'mongoose';
 import { Client } from '../auth/schemas/client.schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { Query } from 'express-serve-static-core';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 
 /*
 const newBookingData = {
@@ -65,19 +66,23 @@ export class BookingsService {
   }
 
   async create(booking: CreateBookingDto, client: Client): Promise<Booking> {
-    /* checking if selected dates are available for booking */
-    const isAvailable = await this.isBookingAvailable(
-      booking.bookingStartDate,
-      booking.bookingStartTime,
-      booking.bookingEndDate,
-      booking.bookingEndTime
-    );
-    if (!isAvailable) {
-      throw new BadRequestException('The desired time slot is alread booked.')
-    }
+    /* looping thru each booking detail to check availability */
+    for (const detail of booking.bookings) {
+      const isAvailable = await this.isBookingAvailable(
+        detail.bookingStartDate,
+        detail.bookingStartTime,
+        detail.bookingEndDate,
+        detail.bookingEndTime
+      );
 
+      if (!isAvailable) {
+        throw new BadRequestException('The desired time slot is alread booked.')
+      }
+    }
+ 
     try{
-      const data = Object.assign(booking, { client: client._id})
+      const data = Object.assign(booking, { client: client.id })
+      // console.log('data in services file:', data);
       const newBooking = await this.bookingModel.create(data);
       console.log(newBooking);
       return newBooking;
@@ -113,7 +118,7 @@ export class BookingsService {
   }
 
 
-  async updateBookingById(bookId: string, booking: CreateBookingDto): Promise<Booking> {
+  async updateBookingById(bookId: string, booking: UpdateBookingDto): Promise<Booking> {
     try {
       /* validating booking */
       const isValidId = mongoose.isValidObjectId(bookId);
