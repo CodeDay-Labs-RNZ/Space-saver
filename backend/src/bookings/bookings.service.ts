@@ -82,7 +82,7 @@ export class BookingsService {
  
     try{
       const data = Object.assign(booking, { client: client.id })
-      // console.log('data in services file:', data);
+      console.log('data in services file:', data);
       const newBooking = await this.bookingModel.create(data);
       console.log(newBooking);
       return newBooking;

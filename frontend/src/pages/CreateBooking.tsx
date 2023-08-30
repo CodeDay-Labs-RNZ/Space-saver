@@ -50,8 +50,8 @@ const bookingDetailsSchema = yup.object().shape({
 })
 
 const bookingValidationSchema = yup.object().shape({
-  clientName: yup.string(),
-  clientEmail: yup.string().email('Invalid email').required('Client email is required'),
+  // clientName: yup.string(),
+  // clientEmail: yup.string().email('Invalid email').required('Client email is required'),
   company: yup.string().required('Company is required'),
   typeOfSpaceNeeded: yup.string().required('Type of space needed is required'),
   bookings: yup.array().of(bookingDetailsSchema).min(1).required(),
@@ -93,12 +93,12 @@ export function CreateBooking() {
 
     console.log("ClientId:", clientId);
 
-    /* checking if date variables are date objecst */
+    /* backend isn't expected clientId, clientName clientEmail so currently commented out */
     if (startDate instanceof Date && startTime instanceof Date && endDate instanceof Date && endTime instanceof Date) {
       const payload = {
-        clientId,
-        clientName: formData.clientName,
-        clientEmail: formData.clientEmail,
+        // clientId,
+        // clientName: formData.clientName,
+        // clientEmail: formData.clientEmail,
         company: formData.company,
         typeOfSpaceNeeded: formData.typeOfSpaceNeeded.trim(),
         bookings: [
