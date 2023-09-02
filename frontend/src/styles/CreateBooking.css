@@ -1,0 +1,36 @@
+.form-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.input-container,
+.select-container {
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.input-container input,
+.select-container select {
+  width: 100%;
+  padding: 10px;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.label-text {
+  font-weight: bold;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+}
