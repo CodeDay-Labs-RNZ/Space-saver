@@ -65,14 +65,10 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
 
 
   const handleTimeSelection = (time: Date, type: 'start-time' | 'end-time') => {
-    if (!isTimeUnavailable) {
-      if (type === 'start-time') {
-        setDate((prev) => ({...prev, startDateTime: time}));
-      } else {
-        setDate((prev) => ({...prev, endDateTime: time}));
-      }
+    if (type === 'start-time') {
+      setDate((prev) => ({...prev, startDateTime: time}));
     } else {
-      alert('The selected time is unavailable')
+      setDate((prev) => ({...prev, endDateTime: time}));
     }
   }
   
