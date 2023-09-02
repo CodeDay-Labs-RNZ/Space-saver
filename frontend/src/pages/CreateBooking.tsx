@@ -1,7 +1,14 @@
 import React, { FormEvent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { DateTime } from 'luxon';
+import { useAuth } from '../context/AuthContext';
 import CalendarPage from './CalendarPage';
+import axios from '../api/axios';
 import * as yup from 'yup';
+const styles = require('../styles/CreateBooking.css');
 
+
+const NEW_BOOKING_ENDPOINT = '/bookings/newBooking';
 
 /* data types for booking data */
 interface DateType {
@@ -19,43 +26,66 @@ interface DateRange {
 
 /* data types for form data */
 interface FormData {
+  clientId: string;
   clientName: string;
   clientEmail: string;
   company: string;
   typeOfSpaceNeeded: string;
-  attendees: string;
   reminder: boolean;
+  // attendees: string;
 }
 
-/* validation schema definiton */
+
+/* untility function for dates */
+const toReadableFormat = (isoString: string, format: string = 'yyyy LLL dd, hh:mm A') => {
+  return DateTime.fromISO(isoString).toFormat(format);
+}
+
+
+/*
+const bookingDetailsSchema = yup.object().shape({
+  bookingStartDate: yup.date().nullable().required('Start date is required'),
+  bookingStartTime: yup.date().nullable().required('Start time is required'),
+  bookingEndDate: yup.date().nullable().required('End date is required'),
+  bookingEndTime: yup.date().nullable().required('End time is required'),
+  reminder: yup.boolean(),
+})
+*/
+
+/* validating booking/bookingDetails schema */
 const bookingValidationSchema = yup.object().shape({
   clientName: yup.string(),
-  clientEmail: yup.string().email('Invalid email').required('Client email is required'),
+  // clientEmail: yup.string().email('Invalid email').required('Client email is required'),
   company: yup.string().required('Company is required'),
   typeOfSpaceNeeded: yup.string().required('Type of space needed is required'),
-  attendees: yup.string().required('Attendees is required'),
+  bookingStartDate: yup.date().nullable().required('Start date is required'),
+  bookingStartTime: yup.date().nullable().required('Start time is required'),
+  bookingEndDate: yup.date().nullable().required('End date is required'),
+  bookingEndTime: yup.date().nullable().required('End time is required'),
   reminder: yup.boolean(),
-  startDate: yup.date().nullable().required('Start date is required'),
-  endDate: yup.date().nullable().required('End date is required'),
-  startTime: yup.date().nullable().required('Start time is required'),
-  endTime: yup.date().nullable().required('End time is required')
+  // attendees: yup.string().required('Attendees is required'),
 })
 
 
 export function CreateBooking() {
 
   /* capture additional booking details by grabbing user's info from backend before submitting form */
+  const { username, email, clientId } = useAuth();
 
+  /* state variables for showing booking success message */
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const navigate = useNavigate();
   const [bookingData, setBookingData] = useState<DateType | DateRange | null>(null);
   const [formData, setFormData] = useState<FormData>({
     /* grab client name and email from backend */
-    clientName: '',
-    clientEmail: '',
+    clientId: clientId || '',
+    clientName: username || '',
+    clientEmail: email || '',
     company: '',
     typeOfSpaceNeeded: '',
-    attendees: '',
     reminder: false,
     /* add additional fields based on bookingSchema and bookingDetailsSchema */
+    // attendees: '',
   })
 
   /* additional state for start and end dates/times */
@@ -70,65 +100,61 @@ export function CreateBooking() {
     setBookingData(data);
   }
 
+
   /* handling form submission */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log("ClientId:", clientId);
 
-    /* validate formData based on bookingSchema and bookingDetailsSchema,
-    then send formData and bookingData to backend */
-    
-
-    /* checking if date variables are date objecst */
+    /* backend isn't expected clientId, clientName clientEmail so currently commented out */
     if (startDate instanceof Date && startTime instanceof Date && endDate instanceof Date && endTime instanceof Date) {
       const payload = {
+        clientId,
         clientName: formData.clientName,
-        clientEmail: formData.clientEmail,
+        // clientEmail: formData.clientEmail,
         company: formData.company,
         typeOfSpaceNeeded: formData.typeOfSpaceNeeded.trim(),
+        bookingStartDate: DateTime.fromJSDate(startDate).toISO(),
+        bookingStartTime: DateTime.fromJSDate(startTime).toISO(),
+        bookingEndDate: DateTime.fromJSDate(endDate).toISO(),
+        bookingEndTime: DateTime.fromJSDate(endTime).toISO(),
         reminder: formData.reminder,
-        attendees: formData.attendees,
-        startDate: startDate.getTime(),
-        endDate: endDate.getTime(),
-        startTime: startTime.getTime(),
-        endTime: endTime.getTime(),
-      }
+        // attendees: formData.attendees,
+      };
 
-      /* convert unix timestamps back to date objects for validation */
-      const payloadWithDates = {
-        ...payload,
-        startDate: startDate ? new Date(payload.startDate as number) : null,
-        endDate: endDate ? new Date(payload.endDate as number) : null,
-        startTime: startTime ? new Date(payload.startTime as number) : null,
-        endTime: endTime ? new Date(payload.endTime as number) : null,
-      }
-      
-      
-      const api = 'http://localhost:3001/bookings';
       
       try {
         
         /* validate payload against schema */
-        console.log("Payload before validation:", payload)
-        console.log("Payload with dates before validation:", payloadWithDates)
-        await bookingValidationSchema.validate(payloadWithDates);
-        
-        const response = await fetch(api, {
-          method: 'POST',
+        console.log("Payload:", payload)
+        await bookingValidationSchema.validate(payload);
+
+        const token = localStorage.getItem('Token');
+        const config = {
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(payload),
-        })
+        };
+
+        console.log("Token:", token)
+        console.log("Headers:", config.headers)
+        console.log("Payload:", payload)
         
-        if (response.ok) {
+        const response = await axios.post(NEW_BOOKING_ENDPOINT, payload, config)
+
+        if (response.status === 201) {
           console.log('Booking created successfully');
+          setBookingSuccess(true);
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 3000);
         } else {
           console.log('Failed to create booking');        
         }
         
       } catch (error) {
-        console.error('Error: ', error);
+        console.error('Error:', error);
       }
 
     } else {
@@ -178,8 +204,10 @@ export function CreateBooking() {
 
 
   return (
-    <div>
+    <div className='form-container'>
       <h1>Create Booking</h1>
+      {bookingSuccess && <div className='success-message'>Booking has been successfully craeted! Redirecting...</div> }
+
       {/* conditionally render calendar component based on bookingData */}
       {bookingData === null && <CalendarPage onBookingData={handleBookingData} />}
       
@@ -192,7 +220,7 @@ export function CreateBooking() {
           <input
             type='text'
             name='startDate'
-            value={startDate ? startDate.toString() : ''}
+            value={startDate ? toReadableFormat(DateTime.fromJSDate(startDate).toISO() || '', 'yyyy-MM-dd') : ''}
             readOnly
           />
         </div>
@@ -201,7 +229,7 @@ export function CreateBooking() {
           <input
             type='text'
             name='endDate'
-            value={endDate ? endDate.toString() : ''}
+            value={endDate ? toReadableFormat(DateTime.fromJSDate(endDate).toISO() || '', 'yyyy-MM-dd') : ''}
             readOnly
           />
         </div>
@@ -210,7 +238,7 @@ export function CreateBooking() {
           <input
             type='text'
             name='startTime'
-            value={startTime ? startTime.toString() : ''}
+            value={startTime ? toReadableFormat(DateTime.fromJSDate(startTime).toISO() || '', 'HH:mm') : ''}
             readOnly
           />
         </div>
@@ -219,7 +247,7 @@ export function CreateBooking() {
           <input
             type='text'
             name='endTime'
-            value={endTime ? endTime.toString() : ''}
+            value={endTime ? toReadableFormat(DateTime.fromJSDate(endTime).toISO() || '', 'HH:mm') : ''}
             readOnly
           />
         </div>
@@ -234,6 +262,7 @@ export function CreateBooking() {
               name='clientName'
               value={formData.clientName}
               onChange={handleInputChange}
+              readOnly
             />
         </div>
         <div>
@@ -244,6 +273,7 @@ export function CreateBooking() {
               name='clientEmail'
               value={formData.clientEmail}
               onChange={handleInputChange}
+              readOnly
             />
         </div>
 
@@ -272,7 +302,7 @@ export function CreateBooking() {
             </select>
         </div>
 
-        {/* todo: change this input to invite additional emails added by comma */}
+        {/* todo: change this input to invite additional emails added by comma 
         <div>
           <label htmlFor='attendees'>Attendees:</label>
             <input
@@ -283,6 +313,7 @@ export function CreateBooking() {
               onChange={handleInputChange}
             />
         </div>
+        */}
 
         {/* todo: after backend has implemented funcionality for setting reminders, tailor this input for that case */}
         <div>

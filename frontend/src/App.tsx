@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './styles/App.css';
 import './styles/Calendar.css';
 import LandingPage from './pages/LandingPage';
@@ -8,29 +8,46 @@ import Contact from "./pages/Contact";
 import Registration from "./pages/Registration";
 import Calendar from "./pages/CalendarPage";
 import CreateBooking from './pages/CreateBooking';
+import Navbar from './components/Navbar';
+import UpdateDeleteBooking from './pages/UpdateDeleteBooking';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
-// testing new branch creation
 
 function App() {
   return (
-    <div className="App">
+    <div className='App'>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </div>
+  )
+}
+
+const AppContent = () => {
+
+  const { isAuthenticated } = useAuth();
+  useEffect(() => {
+    console.log('Is authenticated:', isAuthenticated);
+  }, [isAuthenticated]);
+
+  return (
       <React.Fragment>
         <Router>
+          {isAuthenticated ? <Navbar /> :  null}
             <Routes>
               <Route path='/' element={<LandingPage/>}/>
               <Route path='/login' element={<Login/>}/>
+              <Route path='/registration' element={<Registration/>}/>
               <Route path='/dashboard' element={<Dashboard/>}/>
-            {/*<Route path='/services' element={<Services/>}/>*/}
-
               <Route path='/booking' element={<CreateBooking/>}/>
+              <Route path='/updateDeleteBokings' element={<UpdateDeleteBooking/>}/>
               <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
               <Route path='/contact' element={<Contact/>}/>
-              <Route path='/registration' element={<Registration/>}/>
+            {/*<Route path='/services' element={<Services/>}/>*/}
             </Routes>
         </Router>
       </React.Fragment>
-    </div>
   );
 }
 

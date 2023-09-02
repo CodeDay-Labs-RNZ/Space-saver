@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { Client } from './schemas/client.schema';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -21,7 +20,7 @@ export class AuthService {
 
 
   /* signup route */
-  async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
+  async signUp(signUpDto: SignUpDto): Promise<{ token: string, username: string, email: string }> {
     const { name, email, password } = signUpDto;
 
     // data validation
@@ -48,14 +47,18 @@ export class AuthService {
 
     /* assigning jwt token to client (sign funct. helps generate jwt token)
       sign funct. will contain payload, client's data that's saved to the token */
-    const token = this.jwtService.sign({ id: client._id })
+    const token = this.jwtService.sign({ 
+      id: client._id,
+      username: client.name,
+      email: client.email
+    })
 
-    return { token };
+    return { token, username: client.name, email: client.email };
   }
 
 
   /* signin route */
-  async signIn(signInDto: SignInDto): Promise<{ token: string }> {
+  async signIn(signInDto: SignInDto): Promise<{ token: string, username: string, email: string }> {
     const { email, password } = signInDto;
 
     /* check if client exists thru email */
@@ -68,16 +71,33 @@ export class AuthService {
     if (!client.password) {
       throw new InternalServerErrorException('Client password is missing.');
     }
-
+ 
     /* if client exists, check password with password in db */
     const isPasswordMatched = await bcrypt.compare(password, client.password);
     if (!isPasswordMatched) {
       throw new UnauthorizedException('Invalid password');
     }
 
-    const token = this.jwtService.sign({ id: client._id })
+    const token = this.jwtService.sign({ 
+      id: client._id,
+      username: client.name,
+      email: client.email
+    })
 
-    return { token };
+    return { token, username: client.name, email: client.email };
+  }
+
+
+  /* adding a set to store blacklisted tokens */
+  private readonly blacklistedTokens = new Set<string>();
+
+  /* adding a method to blacklist a token and checking token */
+  blacklistToken(token: string): void {
+    this.blacklistedTokens.add(token);
+  }
+
+  isTokenBlacklisted(token: string): boolean {
+    return this.blacklistedTokens.has(token);
   }
 
 

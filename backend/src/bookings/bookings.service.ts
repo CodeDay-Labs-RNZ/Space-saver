@@ -5,6 +5,9 @@ import * as mongoose from 'mongoose';
 import { Client } from '../auth/schemas/client.schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { Query } from 'express-serve-static-core';
+import { UpdateBookingDto } from './dto/update-booking.dto';
+import { BookingDetails } from './schemas/bookingDetails.schema';
+import { Types } from 'mongoose';
 
 /*
 const newBookingData = {
@@ -25,6 +28,13 @@ const newBookingData = {
 };
 */
 
+
+interface UnavailableDateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
+
 @Injectable()
 export class BookingsService {
    /* creating constructor to inject our model for getting/using data from db */
@@ -40,47 +50,83 @@ export class BookingsService {
     /* todo: add pagination funcationality(finding bookings by emails) breaking up content blocks into navigable pgs */
     try {
       const bookings = await this.bookingModel.find();
+      console.log('Getting all bookings:', JSON.stringify(bookings, null, 2));
       return bookings;
     } catch (error) {
+      // console.error("Detailed Error:", error);
       console.error('Error fetching all bookings: ', error.message);
       throw new Error('Failed to fetch bookings');
     }
   }
 
 
-  /* todo: ensure these check is working, currently not working */
-  /* querying the db for bookings that overlap with desired date/time */
-  /* implement a function to check if future booking is available  */  
-  async isBookingAvailable(startDate: string, startTime: string, 
-                          endDate: string, endTime: string,): Promise<Boolean> {
-
-    const startDateTime = new Date(startDate + 'T' + startTime);
-    const endDateTime = new Date(endDate + 'T' + endTime); 
-    const overlappingBookings = await this.bookingModel.find({
-      $or: [
-        { 'bookings.bookingStartDate' : { $lte: endDateTime }, 'bookings.bookingEndDate': { $gte: startDateTime} },
-      ]
+  async getUnavailableDates(): Promise<UnavailableDateRange[]> {
+    const bookings = await this.bookingModel.find();
+    /* extracting start and end dates of each booking */
+    const unavailableDates: UnavailableDateRange[] = bookings.map(booking => {
+      return {
+        startDate: new Date(booking.bookingStartDate) ,
+        endDate: new Date(booking.bookingEndDate),
+      }
     });
-    return overlappingBookings.length === 0;
+    console.log(unavailableDates)
+    return unavailableDates;
   }
 
-  async create(booking: CreateBookingDto, client: Client): Promise<Booking> {
-    /* checking if selected dates are available for booking */
-    const isAvailable = await this.isBookingAvailable(
-      booking.bookingStartDate,
-      booking.bookingStartTime,
-      booking.bookingEndDate,
-      booking.bookingEndTime
-    );
-    if (!isAvailable) {
-      throw new BadRequestException('The desired time slot is alread booked.')
-    }
 
+  async create(booking: CreateBookingDto, client: Client): Promise<Booking> {
+
+    console.log('Incoming booking object:', booking);
+ 
     try{
-      const data = Object.assign(booking, { client: client._id})
-      const newBooking = await this.bookingModel.create(data);
-      console.log(newBooking);
+     
+      /*
+      const bookingDetails: BookingDetails[] = booking.bookings.map(detail => ({
+        bookingStartDate: detail.bookingStartDate,
+        bookingStartTime: detail.bookingStartTime,
+        bookingEndDate: detail.bookingEndDate,
+        bookingEndTime: detail.bookingEndTime,
+        attendees: detail.attendees,
+        reminder: detail.reminder,
+      }));
+
+      // Explicitly construct the new booking object
+      const newBookingData = {
+        clientId,
+        clientName: client.name,
+        // clientEmail: client.email,
+        company: booking.company,
+        typeOfSpaceNeeded: booking.typeOfSpaceNeeded,
+        bookings: bookingDetails, // Explicitly setting the subdocuments
+      };
+
+      const newBooking = new this.bookingModel(newBookingData);
+      console.log('New booking to be saved:', JSON.stringify(newBooking, null, 2));
+      await newBooking.save();
       return newBooking;
+      */
+
+      // Convert client.id to ObjectId if it's a string (only if needed)
+      const clientId = typeof client.id === 'string' ? new Types.ObjectId(client.id) : client.id;
+
+      const newBooking = new this.bookingModel();
+      newBooking.client = clientId;
+      newBooking.clientName = client.name;
+      newBooking.company = booking.company;
+      newBooking.typeOfSpaceNeeded = booking.typeOfSpaceNeeded;
+      newBooking.bookingStartDate = booking.bookingStartDate;
+      newBooking.bookingEndDate = booking.bookingEndDate;
+      newBooking.bookingStartTime = booking.bookingStartTime;
+      newBooking.bookingEndTime = booking.bookingEndTime;
+      newBooking.reminder = booking.reminder;
+      // newBooking.attendees = booking.bookings[0].attendees; // implement later after frontend can send email reminders
+
+      // console.log('Before Save:', JSON.stringify(newBooking, null, 2));
+      await newBooking.save();
+      console.log('New booking saved successfully:', newBooking);
+      
+      return newBooking;
+
     } catch (error) { 
       console.error('Error creating booking: ', error);
       throw new Error('Failed to create booking');
@@ -113,8 +159,11 @@ export class BookingsService {
   }
 
 
-  async updateBookingById(bookId: string, booking: CreateBookingDto): Promise<Booking> {
+  async updateBookingById(bookId: string, booking: UpdateBookingDto): Promise<Booking> {
     try {
+      console.log("Received bookId:", bookId);
+      console.log("Received booking data:", booking);
+
       /* validating booking */
       const isValidId = mongoose.isValidObjectId(bookId);
       if (!isValidId) {
@@ -129,7 +178,8 @@ export class BookingsService {
       if (!bookingToUpdate) {
         throw new NotFoundException("Booking not found")
       }
-      console.log(bookingToUpdate);
+      
+      console.log('Updated Booking', bookingToUpdate);
       return bookingToUpdate;
       
     } catch (error) {
@@ -139,7 +189,6 @@ export class BookingsService {
       }
       throw error;
     }
-
   }
 
 

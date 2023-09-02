@@ -1,0 +1,19 @@
+.update-delete-h1 {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+.update-button {
+  background-color: #007bff;
+  color: white;
+  padding: 5px;
+  margin: 5px;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 5px;
+  margin: 5px;
+}
