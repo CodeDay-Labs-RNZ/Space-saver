@@ -1,12 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import instance from '../api/axios';
 const styles = require('../styles/Dashboard.css');
+
+
+/* fix backend to handle these endpoints */
+const CURRENT_BOOKING = '/bookings/getBookings'
+const MOST_RECENT_BOOKINGS = '/bookings/getBookings'
+
 
 const Dashboard: React.FC = () => {
     /* add buttons that will route to a new page creating a booking for user */
 
     const navigate = useNavigate();
     const [showBookingOptions, setShowBookingOptions] = useState(false);
+    const [currentBooking, setCurrentBooking] = useState(null);
+    const [mostRecentBooking, setMostRecentBooking] = useState(null);
+
+
+    /* uncomment when api endpoints have been created
+    useEffect(() => {
+        const fetchBookings = async () => {
+            try {
+                // fetching currenting booking 
+                const currentBookingResponse = await instance.get(CURRENT_BOOKING);
+                setCurrentBooking(currentBookingResponse.data)
+
+
+                // fetching most recent booking 
+                const mostRecentBookingResponse = await instance.get(MOST_RECENT_BOOKINGS);
+                setCurrentBooking(mostRecentBookingResponse.data)
+            } catch (error) {
+                console.error('Failed to fetch bookings:', error);
+            }
+        }
+
+        fetchBookings();
+    }, []);
+    */
 
 
     /* function to handle create booking */
@@ -16,9 +47,9 @@ const Dashboard: React.FC = () => {
     }
 
     /* function to handle update/delete booking */
-    const handleUpdateDeleteBooking = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleUpdateDeleteBooking = () => {
         /* todo: navigate to update/delete page (implement page) */
-        //navigate('/update-delete-bookings')
+        navigate('/updateDeleteBokings');
     }
 
 
@@ -40,7 +71,7 @@ const Dashboard: React.FC = () => {
                 {!showBookingOptions? (
                     <>
                         <button className='button-style' onClick={() => setShowBookingOptions(true)}>Create New Booking</button>
-                        <button className='button-style' onClick={() => handleUpdateDeleteBooking}>Update/Delete Booking</button>
+                        <button className='button-style' onClick={() => handleUpdateDeleteBooking()}>Update/Delete Booking</button>
                     </>
                 ) : (
                     <>
