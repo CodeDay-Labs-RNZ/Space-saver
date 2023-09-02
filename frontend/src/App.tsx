@@ -41,7 +41,7 @@ const AppContent = () => {
               <Route path='/registration' element={<Registration/>}/>
               <Route path='/dashboard' element={<Dashboard/>}/>
               <Route path='/booking' element={<CreateBooking/>}/>
-              <Route path='/updateDeleteBokings' element={<UpdateDeleteBooking/>}/>
+              <Route path='/updateDeleteBookings' element={<UpdateDeleteBooking/>}/>
               <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
               <Route path='/contact' element={<Contact/>}/>
             {/*<Route path='/services' element={<Services/>}/>*/}
