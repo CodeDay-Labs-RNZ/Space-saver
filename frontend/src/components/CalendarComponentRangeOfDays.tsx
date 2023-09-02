@@ -83,11 +83,8 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
   }
 
   const handleStartTimeSelection = (time: Date) => {
-    if (!isTimeUnavailable) {
-      setDate((prev) => ({...prev, startTime: time}));
-    } else {
-      alert('The selected start time is unavailable');
-    }
+    setDate((prev) => ({...prev, startTime: time}));
+    
   }
 
   const handleEndDateSelection = (date: Date) => {
@@ -95,11 +92,7 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
   }
 
   const handleEndTimeSelection = (time: Date) => {
-    if (!isTimeUnavailable) {
-      setDate((prev) => ({...prev, endTime: time}));
-    } else {
-      alert('The selected end time is unavailable');
-    }
+    setDate((prev) => ({...prev, endTime: time}));
   }
   
   const startTimes = getTimes(date.startDate);
