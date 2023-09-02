@@ -1,6 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactCalendar from 'react-calendar';
-import { add, format } from 'date-fns';
+import instance from '../api/axios';
+import { add, format, isWithinInterval  } from 'date-fns';
+
+const UNAVAILABLE_DATES = '/bookings/unavailableDates'
+
+
+interface UnavailableDateRange {
+  startDate: string;
+  endDate: string;
+}
 
 /* interface for selecting a range of days */
 interface DateRange {
@@ -15,6 +24,17 @@ interface CalendarComponentProps {
 }
 
 function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
+  
+  const [unavailableDates, setUnavailableDates] = useState<UnavailableDateRange[]>([]);
+  useEffect(() => {
+    instance.get(UNAVAILABLE_DATES).then((response) => {
+      setUnavailableDates(response.data);
+    }).catch((error) => {
+      console.error('Error fetching unavailable dates', error);
+    })
+  }, []);
+
+
   const [date, setDate] = useState<DateRange>({
     startDate: null,
     startTime: null,
@@ -41,13 +61,30 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
   }
 
 
+  const isDateUnavailable = (date: Date) => {
+    return unavailableDates.some(range => 
+      isWithinInterval(date, { start: new Date(range.startDate), end: new Date(range.endDate) })
+    );
+  };
+
+  const isTimeUnavailable = (time: Date) => {
+    return unavailableDates.some(range => 
+      isWithinInterval(time, { start: new Date(range.startDate), end: new Date(range.endDate) })
+    );
+  };
+
+
   const handleStartDateSelection = (date: Date) => {
-    setDate((prev) => ({...prev, startDate: date, startTime: null, endDate: null, endTime: null}));
+    if (!isDateUnavailable(date)) {
+      setDate((prev) => ({...prev, startDate: date, startTime: null, endDate: null, endTime: null}));
+    } else {
+      alert('The selected date is unavailable')
+    }
   }
 
   const handleStartTimeSelection = (time: Date) => {
     setDate((prev) => ({...prev, startTime: time}));
-    /* handle end date after start time selection */
+    
   }
 
   const handleEndDateSelection = (date: Date) => {
@@ -69,6 +106,7 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
       alert("Please select start and end times");
     }
   }
+
 
   const labelStyle = {
     marginRight: '10px',
@@ -98,6 +136,7 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
       {!date.startDate ? (
         <ReactCalendar minDate={new Date()}
           onClickDay={handleStartDateSelection}
+          tileDisabled={({ date, view }) => view === 'month' && isDateUnavailable(date)}
         />
       ) : !date.startTime ? (
         <div className='flex align-items-center gap-4'>
@@ -119,6 +158,7 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
       ) : !date.endDate ? (
         <ReactCalendar minDate={date.startDate} 
           onClickDay={handleEndDateSelection}
+          tileDisabled={({ date, view }) => view === 'month' && isDateUnavailable(date)}
         />
       ) : !date.endTime ? (
         <div className='flex align-items-center gap-4'> 
@@ -138,11 +178,11 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
           </select>
         </div>
       ) : (
-        <div>Your booking is set</div>
+        <div>Please review your selected times and click "Continue To Form" to proceed</div>
       )}
 
       {date.endTime && (
-        <button style={submitButtonStyle} onClick={handleSubmit}>Submit</button>
+        <button style={submitButtonStyle} onClick={handleSubmit}>Continue To Form</button>
       )}
     </div>
   )

@@ -1,0 +1,10 @@
+.navbar {
+  background-color: #f1f1f1;
+  padding: 10px;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

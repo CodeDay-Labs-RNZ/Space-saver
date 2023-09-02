@@ -16,12 +16,10 @@ export class Client extends Document {
   name: string;
 
   @Prop({ unique: [true, 'Duplicate email entered'] })
-  @IsNotEmpty()
   email: string;
 
   @Prop()
   @IsNotEmpty({ message: 'Please add a password' })
-  @IsString()
   password: string;
 
   @Prop({ type: String, enum: ClientRole, default: ClientRole.USER })

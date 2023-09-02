@@ -15,7 +15,7 @@ const LandingPage: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end items-center">
-                    <Link to="/login" className="text-3xl mr-4">Register</Link>
+                    <Link to="/registration" className="text-3xl mr-4">Register</Link>
                     <Link to="/login" className="text-3xl mr-4">Login</Link>
                 </div>
             </header>
