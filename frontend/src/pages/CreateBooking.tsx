@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import CalendarPage from './CalendarPage';
 import axios from '../api/axios';
 import * as yup from 'yup';
+const styles = require('../styles/CreateBooking.css');
 
 
 const NEW_BOOKING_ENDPOINT = '/bookings/newBooking';
@@ -73,9 +74,7 @@ export function CreateBooking() {
 
   /* state variables for showing booking success message */
   const [bookingSuccess, setBookingSuccess] = useState(false);
-
   const navigate = useNavigate();
-
   const [bookingData, setBookingData] = useState<DateType | DateRange | null>(null);
   const [formData, setFormData] = useState<FormData>({
     /* grab client name and email from backend */
@@ -100,6 +99,7 @@ export function CreateBooking() {
   const handleBookingData = (data: DateType | DateRange) => {
     setBookingData(data);
   }
+
 
   /* handling form submission */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -204,9 +204,9 @@ export function CreateBooking() {
 
 
   return (
-    <div>
+    <div className='form-container'>
       <h1>Create Booking</h1>
-      {bookingSuccess && <div>Booking has been successfully craeted! Redirecting...</div> }
+      {bookingSuccess && <div className='success-message'>Booking has been successfully craeted! Redirecting...</div> }
 
       {/* conditionally render calendar component based on bookingData */}
       {bookingData === null && <CalendarPage onBookingData={handleBookingData} />}
