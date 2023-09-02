@@ -28,6 +28,13 @@ const newBookingData = {
 };
 */
 
+
+interface UnavailableDateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
+
 @Injectable()
 export class BookingsService {
    /* creating constructor to inject our model for getting/using data from db */
@@ -53,54 +60,25 @@ export class BookingsService {
   }
 
 
-  /* todo: ensure these check is working, currently not working */
-  /* querying the db for bookings that overlap with desired date/time */
-  /* implement a function to check if future booking is available  */  
-  async isBookingAvailable(startDate: string, startTime: string, 
-                          endDate: string, endTime: string,): Promise<Boolean> {
-
-    const startDateTime = new Date(startDate + 'T' + startTime);
-    const endDateTime = new Date(endDate + 'T' + endTime); 
-    const overlappingBookings = await this.bookingModel.find({
-      $or: [
-        { 'bookings.bookingStartDate' : { $lte: endDateTime }, 'bookings.bookingEndDate': { $gte: startDateTime} },
-      ]
+  async getUnavailableDates(): Promise<UnavailableDateRange[]> {
+    const bookings = await this.bookingModel.find();
+    /* extracting start and end dates of each booking */
+    const unavailableDates: UnavailableDateRange[] = bookings.map(booking => {
+      return {
+        startDate: new Date(booking.bookingStartDate) ,
+        endDate: new Date(booking.bookingEndDate),
+      }
     });
-    return overlappingBookings.length === 0;
-  } 
+    console.log(unavailableDates)
+    return unavailableDates;
+  }
+
 
   async create(booking: CreateBookingDto, client: Client): Promise<Booking> {
-    /* 
-    //looping thru each booking detail to check availability 
-    for (const detail of booking) {
-      const isAvailable = await this.isBookingAvailable(
-        detail.bookingStartDate,
-        detail.bookingStartTime,
-        detail.bookingEndDate,
-        detail.bookingEndTime
-      );
-
-      if (!isAvailable) {
-        throw new BadRequestException('The desired time slot is alread booked.')
-      }
-    }
-    */
 
     console.log('Incoming booking object:', booking);
  
     try{
-
-      /*
-      // const data = Object.assign(booking, { client: client.id })
-      const data = {
-        ...booking, client: client.id, 
-        bookings: booking.bookings
-      }
-      console.log('Received booking:', booking.bookings);
-      const newBooking = await this.bookingModel.create(data);
-      console.log('New booking details', newBooking);
-      return newBooking;
-      */
      
       /*
       const bookingDetails: BookingDetails[] = booking.bookings.map(detail => ({

@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactCalendar from 'react-calendar';
-import { add, format } from 'date-fns';
+import instance from '../api/axios';
+import { add, format, isWithinInterval } from 'date-fns';
 
-/* things to thing about:
-    - need a calendar entry component to pick a time/date for a booking 
-      - in addition, need to think about how time/day are being shown and selected 
-    - need to indicate if a time/day is free or not (available/unavailable) 
-*/
+const UNAVAILABLE_DATES = '/bookings/unavailableDates'
 
 interface DateType {
   justDate: Date | null;
   startDateTime: Date | null;
   endDateTime: Date | null;
+}
 
+interface UnavailableDateRange {
+  startDate: string;
+  endDate: string;
 }
 
 interface CalendarComponentProps {
@@ -22,6 +23,17 @@ interface CalendarComponentProps {
 }
 
 function CalendarComponent({onSubmit}: CalendarComponentProps) {
+
+  const [unavailableDates, setUnavailableDates] = useState<UnavailableDateRange[]>([]);
+
+  useEffect(() => {
+    instance.get(UNAVAILABLE_DATES).then((response) => {
+      setUnavailableDates(response.data);
+    }).catch((error) => {
+      console.error('Error fetching unavailable dates', error);
+    })
+  }, []);
+
 
   /* handling date/time selection, initially set to null */
   const [date, setDate] = useState<DateType>({
@@ -53,12 +65,15 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
 
 
   const handleTimeSelection = (time: Date, type: 'start-time' | 'end-time') => {
-    if (type === 'start-time') {
-      setDate((prev) => ({...prev, startDateTime: time}));
+    if (!isTimeUnavailable) {
+      if (type === 'start-time') {
+        setDate((prev) => ({...prev, startDateTime: time}));
+      } else {
+        setDate((prev) => ({...prev, endDateTime: time}));
+      }
     } else {
-      setDate((prev) => ({...prev, endDateTime: time}));
+      alert('The selected time is unavailable')
     }
-
   }
   
   const handleSubmit = () => {
@@ -73,9 +88,21 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
       alert("Please select both start and end times");
     }
   }
-  
 
   const times = getTimes();
+
+
+  const isDateUnavailable = (date: Date) => {
+    return unavailableDates.some(range => 
+      isWithinInterval(date, { start: new Date(range.startDate), end: new Date(range.endDate) })
+    );
+  };
+
+  const isTimeUnavailable = (time: Date) => {
+    return unavailableDates.some(range => 
+      isWithinInterval(time, { start: new Date(range.startDate), end: new Date(range.endDate) })
+    );
+  };
 
 
   const dropdownStyle = {
@@ -135,10 +162,13 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
           </div>
         </div>
       ) : ( 
-        <ReactCalendar minDate={new Date()} 
+        <ReactCalendar 
+          minDate={new Date()} 
           className='calendar p-2' 
           view='month' 
           onClickDay={(date) => setDate((prev) => ({...prev, justDate: date}))} 
+          tileDisabled={({ date, view }) => view === 'month' && isDateUnavailable(date)
+        }
         />
       )}
     </div>

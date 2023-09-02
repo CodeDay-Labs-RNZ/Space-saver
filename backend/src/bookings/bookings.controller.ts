@@ -6,10 +6,25 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { AuthGuard } from '@nestjs/passport';
 
+
+interface UnavailableDateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
+
 @Controller('bookings')
 export class BookingsController {
   /* inject user service here */
   constructor(private bookingsService: BookingsService) {}
+
+
+  @Get('unavailableDates')
+  @UseGuards(AuthGuard())
+  async getUnavailableDates(): Promise<UnavailableDateRange[]> {
+    return await this.bookingsService.getUnavailableDates();
+  }
+
 
   /* GET, all bookings */ 
   @Get('getAllBookings')
