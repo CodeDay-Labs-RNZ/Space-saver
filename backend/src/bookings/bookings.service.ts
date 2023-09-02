@@ -6,6 +6,8 @@ import { Client } from '../auth/schemas/client.schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { Query } from 'express-serve-static-core';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { BookingDetails } from './schemas/bookingDetails.schema';
+import { Types } from 'mongoose';
 
 /*
 const newBookingData = {
@@ -41,8 +43,10 @@ export class BookingsService {
     /* todo: add pagination funcationality(finding bookings by emails) breaking up content blocks into navigable pgs */
     try {
       const bookings = await this.bookingModel.find();
+      console.log('Getting all bookings:', JSON.stringify(bookings, null, 2));
       return bookings;
     } catch (error) {
+      // console.error("Detailed Error:", error);
       console.error('Error fetching all bookings: ', error.message);
       throw new Error('Failed to fetch bookings');
     }
@@ -63,11 +67,12 @@ export class BookingsService {
       ]
     });
     return overlappingBookings.length === 0;
-  }
+  } 
 
   async create(booking: CreateBookingDto, client: Client): Promise<Booking> {
-    /* looping thru each booking detail to check availability */
-    for (const detail of booking.bookings) {
+    /* 
+    //looping thru each booking detail to check availability 
+    for (const detail of booking) {
       const isAvailable = await this.isBookingAvailable(
         detail.bookingStartDate,
         detail.bookingStartTime,
@@ -79,13 +84,71 @@ export class BookingsService {
         throw new BadRequestException('The desired time slot is alread booked.')
       }
     }
+    */
+
+    console.log('Incoming booking object:', booking);
  
     try{
-      const data = Object.assign(booking, { client: client.id })
-      console.log('data in services file:', data);
+
+      /*
+      // const data = Object.assign(booking, { client: client.id })
+      const data = {
+        ...booking, client: client.id, 
+        bookings: booking.bookings
+      }
+      console.log('Received booking:', booking.bookings);
       const newBooking = await this.bookingModel.create(data);
-      console.log(newBooking);
+      console.log('New booking details', newBooking);
       return newBooking;
+      */
+     
+      /*
+      const bookingDetails: BookingDetails[] = booking.bookings.map(detail => ({
+        bookingStartDate: detail.bookingStartDate,
+        bookingStartTime: detail.bookingStartTime,
+        bookingEndDate: detail.bookingEndDate,
+        bookingEndTime: detail.bookingEndTime,
+        attendees: detail.attendees,
+        reminder: detail.reminder,
+      }));
+
+      // Explicitly construct the new booking object
+      const newBookingData = {
+        clientId,
+        clientName: client.name,
+        // clientEmail: client.email,
+        company: booking.company,
+        typeOfSpaceNeeded: booking.typeOfSpaceNeeded,
+        bookings: bookingDetails, // Explicitly setting the subdocuments
+      };
+
+      const newBooking = new this.bookingModel(newBookingData);
+      console.log('New booking to be saved:', JSON.stringify(newBooking, null, 2));
+      await newBooking.save();
+      return newBooking;
+      */
+
+      // Convert client.id to ObjectId if it's a string (only if needed)
+      const clientId = typeof client.id === 'string' ? new Types.ObjectId(client.id) : client.id;
+
+      const newBooking = new this.bookingModel();
+      newBooking.client = clientId;
+      newBooking.clientName = client.name;
+      newBooking.company = booking.company;
+      newBooking.typeOfSpaceNeeded = booking.typeOfSpaceNeeded;
+      newBooking.bookingStartDate = booking.bookingStartDate;
+      newBooking.bookingEndDate = booking.bookingEndDate;
+      newBooking.bookingStartTime = booking.bookingStartTime;
+      newBooking.bookingEndTime = booking.bookingEndTime;
+      newBooking.reminder = booking.reminder;
+      // newBooking.attendees = booking.bookings[0].attendees; // implement later after frontend can send email reminders
+
+      // console.log('Before Save:', JSON.stringify(newBooking, null, 2));
+      await newBooking.save();
+      console.log('New booking saved successfully:', newBooking);
+      
+      return newBooking;
+
     } catch (error) { 
       console.error('Error creating booking: ', error);
       throw new Error('Failed to create booking');
@@ -120,6 +183,9 @@ export class BookingsService {
 
   async updateBookingById(bookId: string, booking: UpdateBookingDto): Promise<Booking> {
     try {
+      console.log("Received bookId:", bookId);
+      console.log("Received booking data:", booking);
+
       /* validating booking */
       const isValidId = mongoose.isValidObjectId(bookId);
       if (!isValidId) {
@@ -134,7 +200,8 @@ export class BookingsService {
       if (!bookingToUpdate) {
         throw new NotFoundException("Booking not found")
       }
-      console.log(bookingToUpdate);
+      
+      console.log('Updated Booking', bookingToUpdate);
       return bookingToUpdate;
       
     } catch (error) {
@@ -144,7 +211,6 @@ export class BookingsService {
       }
       throw error;
     }
-
   }
 
 

@@ -35,9 +35,36 @@ export class Booking extends Document {
   @IsEnum(TypeOfSpaceNeeded, { message: 'Please enter valid option'})
   typeOfSpaceNeeded: TypeOfSpaceNeeded;
 
-  @Prop({ type: [BookingDetailsSchema] }) /* embedding booking subdoc as an array */
-  bookings: BookingDetails[];
+  @Prop({ required: true })
+  /* todo: get the date as a string from user, @IsDateString() */
+  bookingStartDate: string;
+
+  @Prop({ required: true })
+  /* todo: get the timezone for user, change @IsString() to @IsTimeZone() */
+  bookingStartTime: string
+
+  @Prop({ required: true })
+  bookingEndDate: string;
+
+  @Prop({ required: true })
+  /* todo: get the timezone for user, change @IsString() to @IsTimeZone() */
+  bookingEndTime: string
   
+  /* todo: need to create a function that calculates the reminder dates and times based on duration */
+  @Prop()
+  @IsBoolean()
+  reminder: boolean;
+  
+
+
+  // @Prop({ type: [BookingDetailsSchema] }) /* embedding booking subdoc as an array */
+  // bookings: BookingDetails[];
+
+  /*
+  // should also include @IsEmail() for attendees 
+  @Prop()
+  attendees: string;
+  */
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);
