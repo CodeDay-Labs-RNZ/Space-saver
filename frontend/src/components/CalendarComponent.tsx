@@ -129,8 +129,9 @@ function CalendarComponent({onSubmit}: CalendarComponentProps) {
                 ))}
               </select>
             </label>
+            <p>Please select your desired times and click "Continue To Form" to proceed</p>
 
-            <button style={submitButtonStyle} onClick={handleSubmit}>Submit</button>
+            <button style={submitButtonStyle} onClick={handleSubmit}>Continue To Form</button>
           </div>
         </div>
       ) : ( 

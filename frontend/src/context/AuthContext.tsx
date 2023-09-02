@@ -43,7 +43,7 @@ const decodeJWT = (token: string): DecodedToken => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  console.log('Context in useAuth', context);
+  // console.log('Context in useAuth', context);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')
   }

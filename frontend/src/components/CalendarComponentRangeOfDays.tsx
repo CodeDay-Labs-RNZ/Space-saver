@@ -138,11 +138,11 @@ function CalendarComponentRangeOfDays({onSubmit}: CalendarComponentProps) {
           </select>
         </div>
       ) : (
-        <div>Your booking is set</div>
+        <div>Please review your selected times and click "Continue To Form" to proceed</div>
       )}
 
       {date.endTime && (
-        <button style={submitButtonStyle} onClick={handleSubmit}>Submit</button>
+        <button style={submitButtonStyle} onClick={handleSubmit}>Continue To Form</button>
       )}
     </div>
   )

@@ -1,4 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { useAuth } from '../context/AuthContext';
 import CalendarPage from './CalendarPage';
@@ -6,7 +7,7 @@ import axios from '../api/axios';
 import * as yup from 'yup';
 
 
-const BOOKING_URL = '/bookings';
+const NEW_BOOKING_ENDPOINT = '/bookings/newBooking';
 
 /* data types for booking data */
 interface DateType {
@@ -24,12 +25,13 @@ interface DateRange {
 
 /* data types for form data */
 interface FormData {
+  clientId: string;
   clientName: string;
   clientEmail: string;
   company: string;
   typeOfSpaceNeeded: string;
-  attendees: string;
   reminder: boolean;
+  // attendees: string;
 }
 
 
@@ -39,22 +41,28 @@ const toReadableFormat = (isoString: string, format: string = 'yyyy LLL dd, hh:m
 }
 
 
-/* validating booking/bookingDetails schema */
+/*
 const bookingDetailsSchema = yup.object().shape({
   bookingStartDate: yup.date().nullable().required('Start date is required'),
   bookingStartTime: yup.date().nullable().required('Start time is required'),
   bookingEndDate: yup.date().nullable().required('End date is required'),
   bookingEndTime: yup.date().nullable().required('End time is required'),
-  attendees: yup.string().required('Attendees is required'),
   reminder: yup.boolean(),
 })
+*/
 
+/* validating booking/bookingDetails schema */
 const bookingValidationSchema = yup.object().shape({
-  // clientName: yup.string(),
+  clientName: yup.string(),
   // clientEmail: yup.string().email('Invalid email').required('Client email is required'),
   company: yup.string().required('Company is required'),
   typeOfSpaceNeeded: yup.string().required('Type of space needed is required'),
-  bookings: yup.array().of(bookingDetailsSchema).min(1).required(),
+  bookingStartDate: yup.date().nullable().required('Start date is required'),
+  bookingStartTime: yup.date().nullable().required('Start time is required'),
+  bookingEndDate: yup.date().nullable().required('End date is required'),
+  bookingEndTime: yup.date().nullable().required('End time is required'),
+  reminder: yup.boolean(),
+  // attendees: yup.string().required('Attendees is required'),
 })
 
 
@@ -63,16 +71,22 @@ export function CreateBooking() {
   /* capture additional booking details by grabbing user's info from backend before submitting form */
   const { username, email, clientId } = useAuth();
 
+  /* state variables for showing booking success message */
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  const navigate = useNavigate();
+
   const [bookingData, setBookingData] = useState<DateType | DateRange | null>(null);
   const [formData, setFormData] = useState<FormData>({
     /* grab client name and email from backend */
+    clientId: clientId || '',
     clientName: username || '',
     clientEmail: email || '',
     company: '',
     typeOfSpaceNeeded: '',
-    attendees: '',
     reminder: false,
     /* add additional fields based on bookingSchema and bookingDetailsSchema */
+    // attendees: '',
   })
 
   /* additional state for start and end dates/times */
@@ -96,21 +110,17 @@ export function CreateBooking() {
     /* backend isn't expected clientId, clientName clientEmail so currently commented out */
     if (startDate instanceof Date && startTime instanceof Date && endDate instanceof Date && endTime instanceof Date) {
       const payload = {
-        // clientId,
-        // clientName: formData.clientName,
+        clientId,
+        clientName: formData.clientName,
         // clientEmail: formData.clientEmail,
         company: formData.company,
         typeOfSpaceNeeded: formData.typeOfSpaceNeeded.trim(),
-        bookings: [
-          {
-            bookingStartDate: DateTime.fromJSDate(startDate).toISO(),
-            bookingStartTime: DateTime.fromJSDate(startTime).toISO(),
-            bookingEndDate: DateTime.fromJSDate(endDate).toISO(),
-            bookingEndTime: DateTime.fromJSDate(endTime).toISO(),
-            attendees: formData.attendees,
-            reminder: formData.reminder,
-          },
-        ],
+        bookingStartDate: DateTime.fromJSDate(startDate).toISO(),
+        bookingStartTime: DateTime.fromJSDate(startTime).toISO(),
+        bookingEndDate: DateTime.fromJSDate(endDate).toISO(),
+        bookingEndTime: DateTime.fromJSDate(endTime).toISO(),
+        reminder: formData.reminder,
+        // attendees: formData.attendees,
       };
 
       
@@ -131,10 +141,14 @@ export function CreateBooking() {
         console.log("Headers:", config.headers)
         console.log("Payload:", payload)
         
-        const response = await axios.post(BOOKING_URL, payload, config)
+        const response = await axios.post(NEW_BOOKING_ENDPOINT, payload, config)
 
         if (response.status === 201) {
           console.log('Booking created successfully');
+          setBookingSuccess(true);
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 3000);
         } else {
           console.log('Failed to create booking');        
         }
@@ -192,6 +206,8 @@ export function CreateBooking() {
   return (
     <div>
       <h1>Create Booking</h1>
+      {bookingSuccess && <div>Booking has been successfully craeted! Redirecting...</div> }
+
       {/* conditionally render calendar component based on bookingData */}
       {bookingData === null && <CalendarPage onBookingData={handleBookingData} />}
       
@@ -286,7 +302,7 @@ export function CreateBooking() {
             </select>
         </div>
 
-        {/* todo: change this input to invite additional emails added by comma */}
+        {/* todo: change this input to invite additional emails added by comma 
         <div>
           <label htmlFor='attendees'>Attendees:</label>
             <input
@@ -297,6 +313,7 @@ export function CreateBooking() {
               onChange={handleInputChange}
             />
         </div>
+        */}
 
         {/* todo: after backend has implemented funcionality for setting reminders, tailor this input for that case */}
         <div>

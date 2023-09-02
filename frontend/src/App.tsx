@@ -9,6 +9,7 @@ import Registration from "./pages/Registration";
 import Calendar from "./pages/CalendarPage";
 import CreateBooking from './pages/CreateBooking';
 import Navbar from './components/Navbar';
+import UpdateDeleteBooking from './pages/UpdateDeleteBooking';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
@@ -40,6 +41,7 @@ const AppContent = () => {
               <Route path='/registration' element={<Registration/>}/>
               <Route path='/dashboard' element={<Dashboard/>}/>
               <Route path='/booking' element={<CreateBooking/>}/>
+              <Route path='/updateDeleteBokings' element={<UpdateDeleteBooking/>}/>
               <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
               <Route path='/contact' element={<Contact/>}/>
             {/*<Route path='/services' element={<Services/>}/>*/}
