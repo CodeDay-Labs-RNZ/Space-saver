@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
     /* function to handle update/delete booking */
     const handleUpdateDeleteBooking = () => {
         /* todo: navigate to update/delete page (implement page) */
-        navigate('/updateDeleteBokings');
+        navigate('/updateDeleteBookings');
     }
 
 

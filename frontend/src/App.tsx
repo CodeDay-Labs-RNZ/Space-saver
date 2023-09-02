@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import './styles/App.css';
 import './styles/Calendar.css';
 import LandingPage from './pages/LandingPage';
-import Login from "./pages/Login";
+import Login from "./pages/login";
 import Dashboard from "./pages/Dashboard";
 import Contact from "./pages/Contact";
 import Registration from "./pages/Registration";
