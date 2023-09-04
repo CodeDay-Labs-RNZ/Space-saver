@@ -79,33 +79,6 @@ export class BookingsService {
     console.log('Incoming booking object:', booking);
  
     try{
-     
-      /*
-      const bookingDetails: BookingDetails[] = booking.bookings.map(detail => ({
-        bookingStartDate: detail.bookingStartDate,
-        bookingStartTime: detail.bookingStartTime,
-        bookingEndDate: detail.bookingEndDate,
-        bookingEndTime: detail.bookingEndTime,
-        attendees: detail.attendees,
-        reminder: detail.reminder,
-      }));
-
-      // Explicitly construct the new booking object
-      const newBookingData = {
-        clientId,
-        clientName: client.name,
-        // clientEmail: client.email,
-        company: booking.company,
-        typeOfSpaceNeeded: booking.typeOfSpaceNeeded,
-        bookings: bookingDetails, // Explicitly setting the subdocuments
-      };
-
-      const newBooking = new this.bookingModel(newBookingData);
-      console.log('New booking to be saved:', JSON.stringify(newBooking, null, 2));
-      await newBooking.save();
-      return newBooking;
-      */
-
       // Convert client.id to ObjectId if it's a string (only if needed)
       const clientId = typeof client.id === 'string' ? new Types.ObjectId(client.id) : client.id;
 
@@ -155,6 +128,17 @@ export class BookingsService {
         throw new Error('Failed to fetch booking');
       }
       throw error;
+    }
+  }
+
+
+  async findBookingsByClient(clientId: string): Promise<Booking[]> {
+    try {
+      const bookings = await this.bookingModel.find({client: clientId});
+      return bookings;
+    } catch (error) {
+      console.error('Error finding bookings by client: ', error.message);
+      throw new Error('Failed to fetch bookings by client');
     }
   }
 

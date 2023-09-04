@@ -35,6 +35,15 @@ export class BookingsController {
   }
 
 
+  /* GET, clients bookings */
+  @Get('getClientBookings')
+  @UseGuards(AuthGuard())
+  async getClientBookings(@Req() req): Promise<Booking[]> {
+    const clientId = req.user.id;
+    return this.bookingsService.findBookingsByClient(clientId);
+  }
+
+
   /* POST, create new booking */
     /* getting booking from body of request. booking type is of create booking dto */
     /* protecting account creation route using guards */
