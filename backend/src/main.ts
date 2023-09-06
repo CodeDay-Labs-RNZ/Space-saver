@@ -12,7 +12,7 @@ async function bootstrap() {
   ..the app object will have methods available exclusively for that specific platform */
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT');
+  const port = configService.get<number>('BACKENDPORT');
 
   app.useGlobalPipes(new ValidationPipe())
 
