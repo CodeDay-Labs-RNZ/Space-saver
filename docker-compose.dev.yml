@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  frontend_space_saver:
+    container_name: frontend_space_saver
+    build:
+      context: ./frontend
+      dockerfile: dev.Dockerfile
+
+    # Set environment variables directly in the docker-compose file
+#    environment:
+#      ENV_VARIABLE: ${ENV_VARIABLE}
+#      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+
+    # Set envrionment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    restart: always
+    ports:
+      - "3000:3000"
+#    networks:
+#      - my_network
+
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+
+#networks:
+#  my_network:
+#    external: true
+
+  spacesaver:
+    container_name: backend_space_saver
+    build:
+      context: ./backend
+      dockerfile: dev.Dockerfile
+
+    # Set environment variables directly in the docker-compose file
+    #    environment:
+    #      ENV_VARIABLE: ${ENV_VARIABLE}
+    #      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+
+    # Set envrionment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      - ./backend/src:/app/src
+    restart: always
+    ports:
+      - "3001:3001"
+  #    networks:
+  #      - my_network
+
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+
+#networks:
+#  my_network:
+#    external: true
+
