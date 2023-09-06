@@ -294,7 +294,7 @@ const Register: React.FC = () => {
           )}
         <div className="text-center">
             <span className="text-gray-500 mx-2">Already have an account?</span>
-            <a href="/Login.tsx" className="text-blue-500 font-bold hover:underline">
+            <a href="/login" className="text-blue-500 font-bold hover:underline">
                 Login Here
             </a>
         </div>
