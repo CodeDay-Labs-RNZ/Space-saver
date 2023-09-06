@@ -1,21 +1,54 @@
 # Space-saver
-Part of the CodeDay Labs group responsible for creation of an application where users can sign-up and reserve a space from business that will work with this application to put their locations here in.
+
+### Overview
+Space-saver is an application developed as part of the CodeDay Labs initiative. The application allows users to sign up and reserve spaces from businesses that collaborate with the platform.
+
+### Features
+- User Authenticaiton 
+- Space Booking
+- User Management
+
+### Tech Stack
+- Backend: NestJS
+- Frontend: React, TypeScript
+
+### Prerequisites
+- Node.js
+- npm
+- Docker (optional)
 
 
-### Install Dependencies
+## Installation
+
+#### Backend 
 ```
-# Backend deps
+cd backend
 npm install
 ```
 
-### Run Server
+#### Fronted
 ```
-# Run Server, basic server setup, not fully functional
-npm run start:dev 
+cd frontend
+npm install
 ```
 
-### Run Client
+
+## Running the application
+
+#### Backend 
 ```
-# Run frontend
-npm run start 
+npm run start:dev
+```
+
+#### Fronted
+```
+npm run start
+```
+
+#### Docker Support
+###### if you prefer using docker, you can build, run, and stop the containers in your terminal in the root directory of the Space-saver project:
+```
+docker-compose -f docker-compose.dev.yml build  // building docker containers
+docker-compose -f docker-compose.dev.yml up     // running docker containers
+docker-compose -f docker-compose.dev.yml down   // stopping docker containers
 ```
