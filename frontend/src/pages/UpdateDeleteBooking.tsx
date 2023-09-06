@@ -5,7 +5,7 @@ const styles = require('../styles/UpdateDeleteBooking.css');
 
 /* controller put and delete endpoints require booking id 
 http://localhost:3000/bookings/updateBooking/:id */
-const GET_ALL_BOOKINGS_ENDPOINT = '/bookings/getAllBookings';
+const GET_USER_BOOKINGS_ENDPOINT = '/bookings/getClientBookings';
 const UPDATE_BOOKINGS_ENDPOINT = '/bookings/updateBooking';
 const DELETE_BOOKINGS_ENDPOINT = '/bookings/deleteBooking';
 
@@ -71,7 +71,7 @@ export const UpdateDeleteBooking: React.FC = () => {
       try {
         setLoading(true);
         /* why is instance.get(api) working but not axios.get(api)? */
-        const response = await instance.get(GET_ALL_BOOKINGS_ENDPOINT);
+        const response = await instance.get(GET_USER_BOOKINGS_ENDPOINT);
         setBookings(response.data);
         console.log('Get api call response:', JSON.stringify(response.data));
       } catch (error) {

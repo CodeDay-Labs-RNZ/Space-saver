@@ -206,7 +206,7 @@ export function CreateBooking() {
   return (
     <div className='form-container'>
       <h1>Create Booking</h1>
-      {bookingSuccess && <div className='success-message'>Booking has been successfully craeted! Redirecting...</div> }
+      {bookingSuccess && <div className='success-message'>Booking has been successfully created! Redirecting...</div> }
 
       {/* conditionally render calendar component based on bookingData */}
       {bookingData === null && <CalendarPage onBookingData={handleBookingData} />}
