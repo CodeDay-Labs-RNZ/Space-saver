@@ -1,7 +1,7 @@
 # Space-saver
 
 ### Overview
-Space-saver is an application developed by [Nicklas Di Pietro](https://www.linkedin.com/in/nicklasdipietro/), [Zini Wang](https://www.linkedin.com/in/ziniwang/), and [Robel Hailu](https://www.linkedin.com/in/robelhailu/) as part of the CodeDay Labs initiative. The application allows users to sign up and reserve spaces from businesses that collaborate with the platform.
+Space-saver is an application developed by [Nicklas Di Pietro](https://www.linkedin.com/in/nicklasdipietro/), [Zini Wang](https://www.linkedin.com/in/ziniwang/), and [Robel Hailu](https://www.linkedin.com/in/robelhailu/) as part of the CodeDay Labs summer internship. The application allows users to sign up and reserve spaces from businesses that collaborate with the platform.
 
 ### Features
 - User Authenticaiton 
