@@ -7,10 +7,10 @@ services:
       context: ./frontend
       dockerfile: dev.Dockerfile
       
-      # Set environment variables directly in the docker-compose file
-      # environment:
-      #   ENV_VARIABLE: ${ENV_VARIABLE}
-      #   NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    # Set environment variables directly in the docker-compose file
+    # environment:
+    #   ENV_VARIABLE: ${ENV_VARIABLE}
+    #   NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
 
     # Set envrionment variables based on the .env file
     env_file:
@@ -39,8 +39,8 @@ services:
       dockerfile: dev.Dockerfile
 
       # Set environment variables directly in the docker-compose file
-      # environment:
-      #   MONGO_URI: ${MONGO_URI}  # Explicitly setting the MONGO_URI
+    environment:
+      MONGO_URI: ${MONGO_URI}  # Explicitly setting the MONGO_URI
       #   ENV_VARIABLE: ${ENV_VARIABLE}
       #   NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
 
@@ -66,11 +66,11 @@ services:
   db:
     image: mongo:latest # using lates mongo image
     # Set environment variables directly in the docker-compose file
-    # environment:
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     #   ENV_VARIABLE: ${ENV_VARIABLE}
     #   NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-    #   MONGO_INITDB_ROOT_USERNAME: root
-    #   MONGO_INITDB_ROOT_PASSWORD: example
 
     ports:
       - "27017:27017"
