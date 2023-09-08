@@ -4,4 +4,4 @@
 .env
 Dockerfile
 fly.toml
-build
+dist

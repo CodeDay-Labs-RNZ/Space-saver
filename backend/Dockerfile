@@ -2,15 +2,12 @@
 FROM node:18
 # Create a directory to hold the application code inside the image
 WORKDIR /usr/src/app
-# Copy package.json and package-lock.json
-COPY package*.json ./
-# Install dependencies
-RUN npm install
-# Copy the rest of the code
+# Copy the whole of the code
 COPY . .
-# Copy tsconfig.json
-COPY tsconfig*.json ./
+# Running installs and package builds
+RUN npm install
+RUN npm run build
 # Expose the port
 EXPOSE 3001
 # Run the application in development mode
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start:prod"]

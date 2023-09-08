@@ -5,7 +5,7 @@ services:
     container_name: frontend_space_saver
     build:
       context: ./frontend
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
       
     # Set environment variables directly in the docker-compose file
     # environment:
@@ -36,7 +36,7 @@ services:
     container_name: backend_space_saver
     build:
       context: ./backend
-      dockerfile: dev.Dockerfile
+      dockerfile: backend/Dockerfile
 
       # Set environment variables directly in the docker-compose file
     environment:
