@@ -46,9 +46,9 @@ npm run start
 ```
 
 #### Docker Support
-###### if you prefer using docker, you can build, run, and stop the containers in your terminal in the root directory of the Space-saver project:
+###### if you prefer using docker, you can run, and stop the containers in your terminal in the root directory of the Space-saver project:
 ```
-docker-compose -f docker-compose.dev.yml build   // building docker containers
+docker-compose -f docker-compose.dev.yml build   // not needed: building docker containers done in scripts
 docker-compose -f docker-compose.dev.yml up      // running docker containers
 docker-compose -f docker-compose.dev.yml down    // stopping docker containers
 ```

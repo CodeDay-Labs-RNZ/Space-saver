@@ -1,14 +1,18 @@
 import { TypeOfSpaceNeeded } from '../schemas/bookings.schema';
-import { BookingStatus } from '../schemas/bookingDetails.schema';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsOptional, IsEmail, IsEnum, IsString, IsEmpty, IsBoolean, IsNotEmpty, ValidateNested, IsDateString } from 'class-validator';
-import { Type } from 'class-transformer';
 import { Client } from '../../auth/schemas/client.schema';
-import { BookingDetailsDto } from './booking-details.dto';
 
 
+/** 
+ * `UpdateBookingDto` data transfer object used for updating an existing booking. 
+ * Props: `clientName`, `clientEmail`, `company`,`typeOfSpaceNeeded`, 
+ * `bookingStartDate`, `bookingStartTime`, `bookingEndDate`, `bookingEndTime`, and `reminder`. 
+ * Class-validator decorators ensure data passed to create a booking is valid. 
+ */
 export class UpdateBookingDto {
   
+
+  // client details (not editable, data passed to create a booking)
   @IsEmpty({ message: 'Cannot pass client id' })
   readonly client: Client; 
 
@@ -20,6 +24,20 @@ export class UpdateBookingDto {
   @IsString()
   readonly clientName: string;
 
+  @IsString()
+  readonly bookingStartDate: string;
+
+  @IsString()
+  readonly bookingStartTime: string;
+
+  @IsString()
+  readonly bookingEndDate: string;
+
+  @IsString()
+  readonly bookingEndTime: string;
+
+
+  // booking details (data passed to create a booking)
   @IsOptional()
   @IsString()
   company: string;
@@ -28,35 +46,20 @@ export class UpdateBookingDto {
   @IsEnum(TypeOfSpaceNeeded, { message: 'Please enter valid option'})
   typeOfSpaceNeeded: TypeOfSpaceNeeded;
 
-  @IsString()
-  readonly bookingStartDate: string;
-
-  @IsString()
-  // todo: get the timezone for user, @IsTimeZone() 
-  readonly bookingStartTime: string;
-
-  @IsString()
-  readonly bookingEndDate: string;
-
-  @IsString()
-  // todo: get the timezone for user, @IsTimeZone() 
-  readonly bookingEndTime: string;
-
   @IsBoolean()
-  /* todo: need to create a function that calculates the reminder dates and times based on duration */
   readonly reminder: boolean;
 
-  /*
+
+  /* additional fields to be added to the schema:
+
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => BookingDetailsDto)
-  bookings?: BookingDetailsDto[];
-  */
-
-  /* todo: activate this field when a user has created/updated/deleted a booking */
-  /*
-  @IsOptional()
+  readonly bookings: BookingDetailsDto[];
+  
+  @Prop({ required: true })
   bookingStatus: BookingStatus;
+
   */
 
 }

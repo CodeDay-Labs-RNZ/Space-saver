@@ -5,6 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { Logger, ValidationPipe } from '@nestjs/common';
 
+
+/**
+ * This TypeScript function sets up a Nest.js application, 
+ * loads environment variables from a .env file, 
+ * configures global validation pipes, 
+ * enables CORS for all routes, and listens for incoming requests on a specified port.
+ */
 async function bootstrap() {
   dotenv.config(); /* loading environment variables from .env file */
   
@@ -25,4 +32,6 @@ async function bootstrap() {
   await app.listen(port);
   Logger.log(`~ Application is running on: ${await app.getUrl()}`);
 }
+
+
 bootstrap();

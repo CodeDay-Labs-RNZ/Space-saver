@@ -1,44 +1,48 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsDateString, IsEmail, IsTimeZone, IsBoolean, IsString } from 'class-validator';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { IsBoolean } from 'class-validator';
 
 
+/**
+ * BookingStatus string constants representing possible status values for a booking: 
+ * `ROOMRENTAL`, `DESKRENTAL`, `FLOORRENTAL`. 
+*/
 export enum BookingStatus {
   CONFIRMED = 'Confirmed',
   PENDING = 'Pending',
   CANCELLED = 'Cancelled',
 }
 
-export class BookingDetails {
+
+export class 
+
+/**  
+ * `BookingDetails` class represents details of booking. 
+ * Props`bookingStartDate`, `bookingStartTime`, `bookingEndDate`, `bookingEndTime`, 
+ * `attendees`, and `reminder`.  
+ * Props define necessary info for a booking, the start and end dates/times, 
+ * the attendees, and whether a reminder should be set. 
+ */
+
+BookingDetails {
       
   @Prop({ required: true })
-  /* todo: get the date as a string from user, @IsDateString() */
   bookingStartDate: string;
 
   @Prop({ required: true })
-  /* todo: get the timezone for user, change @IsString() to @IsTimeZone() */
   bookingStartTime: string
 
   @Prop({ required: true })
   bookingEndDate: string;
 
   @Prop({ required: true })
-  /* todo: get the timezone for user, change @IsString() to @IsTimeZone() */
   bookingEndTime: string
 
   @Prop()
-  /* should also include @IsEmail() for attendees */
   attendees: string;
 
-  /* todo: need to create a function that calculates the reminder dates and times based on duration */
   @Prop()
   @IsBoolean()
   reminder: boolean;
-
-  /* todo: activate this field when a user has created/updated/deleted a booking */
-  /*
-  @Prop({ required: true })
-  bookingStatus: BookingStatus;
-  */
 
 }
 

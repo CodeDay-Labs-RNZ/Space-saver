@@ -1,6 +1,10 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 
+/**
+ * SignUpDto TypeScript class represents data transfer object for signing up,
+ * Props: name, email, password. 
+ */
 export class SignUpDto{
   
   @IsNotEmpty()

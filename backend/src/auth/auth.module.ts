@@ -8,6 +8,10 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { ClientSchema } from './schemas/client.schema';
 
+
+/* The AuthModule class is responsible for handling authentication-related functionality in a
+TypeScript application. Importing necessary modules, defining controllers and providers,
+and exporting modules for use in other parts of the application. */
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),

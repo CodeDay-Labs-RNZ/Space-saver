@@ -1,7 +1,9 @@
+// Services file handles all our logic (get/save data from db, etc.,) 
 import { Injectable } from '@nestjs/common';
 
-/* services file handles all our logic (get/save data from db, etc.,) */
 
+/* The AppService class is a TypeScript Injectable class that provides a method to return the string
+"Hello World!". */
 @Injectable()
 export class AppService {
   getHello(): string {
