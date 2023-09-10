@@ -15,6 +15,14 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 
+/**
+ * App function returns a JSX element that wraps the AppContent component with an AuthProvider
+ * component.
+ * 
+ * @returns The App component is returning a div element with the className 'App'. Inside the div, it
+ * is rendering the AuthProvider component, which is a context provider component. Inside the
+ * AuthProvider component, it is rendering the AppContent component.
+ */
 function App() {
   return (
     <div className='App'>
@@ -26,8 +34,10 @@ function App() {
 }
 
 const AppContent = () => {
-
   const { isAuthenticated } = useAuth();
+
+  /* `useEffect` hook is used to perform side effects in a functional component. 
+  In this case, it's used to log the value of the `isAuthenticated` variable whenever it changes. */
   useEffect(() => {
     console.log('Is authenticated:', isAuthenticated);
   }, [isAuthenticated]);
