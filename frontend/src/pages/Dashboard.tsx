@@ -4,13 +4,13 @@ import instance from '../api/axios';
 const styles = require('../styles/Dashboard.css');
 
 
-/* fix backend to handle these endpoints */
+// todo: fix backend to handle these endpoints 
 const CURRENT_BOOKING = '/bookings/getBookings'
 const MOST_RECENT_BOOKINGS = '/bookings/getBookings'
 
 
+/* TypeScript React component represents a dashboard page that allows users to create and manage bookings. */
 const Dashboard: React.FC = () => {
-    /* add buttons that will route to a new page creating a booking for user */
 
     const navigate = useNavigate();
     const [showBookingOptions, setShowBookingOptions] = useState(false);
@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
     const [mostRecentBooking, setMostRecentBooking] = useState(null);
 
 
-    /* uncomment when api endpoints have been created
+    /* // todo: uncomment when api endpoints have been created
     useEffect(() => {
         const fetchBookings = async () => {
             try {
@@ -40,15 +40,22 @@ const Dashboard: React.FC = () => {
     */
 
 
-    /* function to handle create booking */
+/**
+ * function `handleCreateBooking` navigates to calendar page and passes the type of booking as state.
+ * 
+ * @param {string} type - type parameter represents the type of booking. 
+ * It's used to pass type of booking as state when navigating to the calendar page.
+ */
     const handleCreateBooking = (type: string) => {
-        /* navigate to calendar page and pass the type of booking as state */
+        // navigate to calendar page and pass the type of booking as state
         navigate('/calendar', { state: { type } });
     }
 
-    /* function to handle update/delete booking */
+
+/**
+ * The function `handleUpdateDeleteBooking` navigates to the update/delete bookings page.
+ */
     const handleUpdateDeleteBooking = () => {
-        /* todo: navigate to update/delete page (implement page) */
         navigate('/updateDeleteBookings');
     }
 

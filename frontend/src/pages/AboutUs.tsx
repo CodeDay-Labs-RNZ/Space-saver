@@ -1,5 +1,8 @@
 import React from "react";
 
+/**
+ * function returns React component that displays information about the team members.
+ */
 function AboutUs() {
     return (
                 <div className="bg-white p-6 rounded-lg shadow-md">

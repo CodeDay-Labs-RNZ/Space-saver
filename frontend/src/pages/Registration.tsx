@@ -6,14 +6,19 @@ import axios from '../api/axios';
 const styles = require('../styles/Register.css');
 
 
-/* USER_REGEX, must start with lower/upper case letter, 4-24 chars in length lower/upper case alphabets and/or digits only and hyphens or underscore */
-/* PWD_REGEX, requires one lower/upper case letter, one digit and one special character and can be anywhere from 5-24 chars in length */
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{4,24}$/;
 const REGISTER_URL = '/auth/signup';
 
 
+/* Regex for validating user input. 
+ USER_REGEX, must start with lower/upper case letter, 4-24 chars in length lower/upper case alphabets and/or digits only and hyphens or underscore 
+ PWD_REGEX, requires one lower/upper case letter, one digit and one special character and can be anywhere from 5-24 chars in length 
+*/
+const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{4,24}$/;
+
+
+/* TypeScript React component for a registration form handling user input validation and form submission. */
 const Register: React.FC = () => {
 
   const navigate = useNavigate();
@@ -47,45 +52,62 @@ const Register: React.FC = () => {
   const [success, setSuccess] = useState<Boolean>(false);
 
  
+/* The useEffect hook sets the focus on an input element with a ref of emailInputRef. 
+This will happen when component first loads, indicated by empty dependency array passed as to useEffect. */
   useEffect(() => {
-    /* first time useEffect is called, focus is on user input when component loads */
+    // first time useEffect is called, focus is on user input when component loads 
     emailInputRef.current?.focus();
   }, []);
 
+
+/* The useEffect hook is used to perform side effects in functional components. */
   useEffect(() => {
-    /* focus on username input when component loads */
+    // focus on username input when component loads 
     userInputRef.current?.focus();
   }, []);
 
 
-  /* validation, on name change check if valid */
+/* The `useEffect` hook is setting up a side effect that will be triggered whenever `username` variable changes. */
   useEffect(() => {
     const result = USER_REGEX.test(username);
     setValidUserName(result);
   }, [username]);
 
-  /* useEffect is applied to user name to validate user name. Every time name changes, it'll check validation of that field */
+
+/* The `useEffect` hook checks if the `email` state variable matches regex `EMAIL_REGEX`. 
+Then sets `validEmail` state variable to result of test. `useEffect` hook is triggered whenever `email` state variable changes. */
   useEffect(() => {
-    /*  USER_REGEX.test(...) <- testing user state to regex we've defined */
     const result = EMAIL_REGEX.test(email);
     setValidEmail(result);
   }, [email]);
 
+
+/* The useEffect hook is used to perform logic whenever `password` or `matchPwd` state variables change. */
   useEffect(() => {
     const result = PWD_REGEX.test(password);
-    /* confirming password to match password state and checking if true/false */
-    /* anytime result/match changes, validPwdMatch will check if field has changed */
     setValidPwd(result);
     const match = password === matchPwd;
     setValidPwdMatch(match);
   }, [password, matchPwd]);
 
+
+/* The useEffect hook is setting the error message state (errMsg) to empty string 
+whenever username, email, password, or matchPwd state variables change. 
+This ensures that error message is cleared whenever any of these input fields are modified by the user. */
   useEffect(() => {
     setErrMsg('');
-    /* anytime user changes one of three states, error msg will clear out */
   }, [username, email, password, matchPwd]);
 
 
+  /**
+   * handleSubmit function is used to handle form submission in a registration process, 
+   * performing validation and making an API call to register a user.
+   * 
+   * @param e - The parameter `e` is of type `React.FormEvent<HTMLFormElement>`. It represents the form
+   * submission event in React.
+   * 
+   * @returns The function `handleSubmit` does not have a return statement.
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -99,7 +121,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      /* destructuring props (username, email, password) */
+
       const response = await axios.post(REGISTER_URL, 
         JSON.stringify({ name: username, email, password }), 
         {
@@ -107,18 +129,17 @@ const Register: React.FC = () => {
           withCredentials: true
         });
 
-      console.log(response.data.accessToken); 
-      console.log(JSON.stringify(response));
+      // console.log(response.data.accessToken); 
+      // console.log(JSON.stringify(response));
+      console.log("You have successfully registered!");
       const accessToken = response.data.accessToken;
       
-      /* clear input fields then set success to true */
+      // clear input fields then set success to true indicating successful registration, and navigate to login page
       setUserName('');
       setEmail('');
       setPassword('');
       setMatchPwd('');
       setSuccess(true);
-
-      /* navigate to login after registering */
       navigate('/login')
 
     } catch (error: any) {

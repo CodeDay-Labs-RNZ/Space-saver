@@ -3,31 +3,22 @@ import instance from '../api/axios';
 import { DateTime } from 'luxon';
 const styles = require('../styles/UpdateDeleteBooking.css');
 
-/* controller put and delete endpoints require booking id 
-http://localhost:3000/bookings/updateBooking/:id */
+// api endpoints
 const GET_USER_BOOKINGS_ENDPOINT = '/bookings/getClientBookings';
 const UPDATE_BOOKINGS_ENDPOINT = '/bookings/updateBooking';
 const DELETE_BOOKINGS_ENDPOINT = '/bookings/deleteBooking';
 
 
+/* `enum TypeOfSpaceNeeded` is used to represent different types of space that can be rented. */
 export enum TypeOfSpaceNeeded {
   ROOMRENTAL = 'Rent A Room',
   DESKRENTAL = 'Rent A Desk',
   FLOORRENTAL = 'Rent A Floor',
 }
 
-/*
-export interface BookingDetailsType {
-  bookingStartDate: string;
-  bookingStartTime: string;
-  bookingEndDate: string;
-  bookingEndTime: string;
-  attendees: string;
-  reminder: boolean;
-  // bookingStatus?: BookingStatus;  // Uncomment this line if you activate the bookingStatus field later
-}
-*/
 
+/* Interface is defining the structure of an object that represents a booking. 
+It specifies the properties and their types that a booking object should have. */
 export interface BookingType {
   _id: string;  // Assuming that each booking has an 'id'
   client: ClientType;  // Assuming that the client is represented by a string ID
@@ -45,32 +36,49 @@ export interface BookingType {
   // bookings: BookingDetailsType[];
 }
 
+
+/* Interface is defining the structure of an object that represents a client. 
+Interface defines the `client` property in the `BookingType` interface, 
+which represents the client associated with a booking. */
 export interface ClientType {
   id: string;
   name: string;
   email: string;
-  // Add other fields as needed
 }
 
-/* untility function for dates */
+
+/**
+ * function `toReadableFormat` converts an ISO string to a readable format using the specified format string.
+ * 
+ * @param {string} isoString - `isoString` represents a date and time in ISO 8601 format.
+ * It should be in the format `YYYY-MM-DDTHH:mm:ss.sssZ`
+ * @param {string} [format=yyyy LLL dd, HH:mm] - `format` specifies the desired format for the output.
+ * It uses a combination of letters and special characters to represent different parts of the date and time.
+ * 
+ * @returns Returns a formatted string representation of the provided ISO string using the specified format.
+ */
 const toReadableFormat = (isoString: string, format: string = 'yyyy LLL dd, HH:mm') => {
   return DateTime.fromISO(isoString).toFormat(format);
 }
 
 
+/* TypeScript React component is responsible for fetching existing bookings from a backend API, 
+displaying them in a list, and providing functionality to update or delete each booking. */
 export const UpdateDeleteBooking: React.FC = () => {
   const [bookings, setBookings] = useState<BookingType[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   
-  console.log('bookings', bookings);
+  // console.log('bookings', bookings);
 
+
+/* `useEffect` hook is used to perform side effects in a functional component. 
+In this case, `useEffect` hook is fetching existing bookings from backend API when component is mounted. */
   useEffect(() => {
-    /* fetch existing bookings from backend */
+    // fetch existing bookings from backend 
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        /* why is instance.get(api) working but not axios.get(api)? */
         const response = await instance.get(GET_USER_BOOKINGS_ENDPOINT);
         setBookings(response.data);
         console.log('Get api call response:', JSON.stringify(response.data));
@@ -80,7 +88,6 @@ export const UpdateDeleteBooking: React.FC = () => {
         setLoading(false);
       }
     }
-
     fetchBookings();
   }, []);
 
@@ -88,32 +95,44 @@ export const UpdateDeleteBooking: React.FC = () => {
   if (loading) {
     return <p>Loading...</p>;
   }
+
   
+/**
+ * handleUpdate function updates a booking by sending PUT request to server 
+ * and updates bookings state with the updated booking.
+ * 
+ * @param {BookingType} updatedBooking - `updatedBooking` is an object of type
+ * `BookingType` that represents the updated booking information.
+ */
   const handleUpdate = async (updatedBooking: BookingType) => {
     const isConfirmed = window.confirm('Are you sure you want to update this booking?');
     if (isConfirmed) {
       try {
-        console.log("ID being sent:", updatedBooking._id); 
-        console.log("Data being sent:", updatedBooking);  
+        // console.log("ID being sent:", updatedBooking._id); 
+        // console.log("Data being sent:", updatedBooking);  
 
         const { client, ...bookingWithoutClient } = updatedBooking;
 
         const response =  await instance.put(`${UPDATE_BOOKINGS_ENDPOINT}/${updatedBooking._id}`, bookingWithoutClient);
-        // await instance.put(`${UPDATE_BOOKINGS_ENDPOINT}/${updatedBooking.id}`, updatedBooking);
         console.log('Update API response:', response);
+        console.log('Updated bookings:', bookings);
         setBookings(bookings.map(theBooking => theBooking._id === updatedBooking._id ? updatedBooking : theBooking));
-        setEditingId(null); /* reseting editing ID after update */
+        setEditingId(null); // reseting editing ID after update 
       } catch (error) {
         console.error('Failed to update bookings', error);
       }
     } else {
-      /* if user clicked cancel, exit edit mode */
+      // if user clicked cancel, exit edit mode 
       setEditingId(null);
     }
-
   }
 
 
+/**
+ * handleDelete function is used to delete a booking by making an API call and updating the bookings state.
+ * 
+ * @param {string} bookingId - `bookingId` represents the unique identifier of booking that needs to be deleted.
+ */
   const handleDelete = async (bookingId: string) => {
     const isConfirmed = window.confirm('Are you sure you want to delete this booking?');
     if (isConfirmed) {
@@ -125,7 +144,7 @@ export const UpdateDeleteBooking: React.FC = () => {
         console.error('Failed to delete booking', error);
       }
     } else {
-      /* if user clicked cancel, exit edit mode */
+      // if user clicked cancel, exit edit mode
       setEditingId(null);
     }
   }

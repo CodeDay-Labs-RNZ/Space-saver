@@ -7,6 +7,7 @@ const styles = require('../styles/Register.css');
 
 const LOGIN_URL = '/auth/signin';
 
+
 const Login: React.FC = () => {
 
   const { login } = useAuth();
@@ -20,15 +21,29 @@ const Login: React.FC = () => {
   const [errMsg, setErrMsg] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
 
+
+/* `useEffect` hook used to perform side effects in a functional component. 
+In this case, the hook is used to focus on email input field when component is mounted. */
   useEffect(() => {
     emailInputRef.current?.focus();
   }, []);
 
+
+/* `useEffect` hook used to perform side effects in a functional component. 
+In this case, the hook is used to clear error message (`errMsg`) whenever 
+`userEmail` or `password` state variables change. */
   useEffect(() => {
     setErrMsg('');
   }, [userEmail, password]);
 
 
+  /**
+   * Above function is a form submission handler that sends a POST request to a login endpoint, 
+   * handles the response, and performs various actions based on the response.
+   * 
+   * @param e - Parameter `e` is type `React.FormEvent<HTMLFormElement>`. It represents the form
+   * submission event in React.
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -38,10 +53,10 @@ const Login: React.FC = () => {
         password: password
       });
 
-      console.log(JSON.stringify(response));
+      // console.log(JSON.stringify(response));
       const accessToken = response.data.token;
 
-      /* decoding token to get username/email */
+      // decoding token to get username/email/clientId
       const base64Url = accessToken.split('.')[1];
       const base64 = base64Url.replace('-', '+').replace('_', '/');
       const payload = JSON.parse(window.atob(base64));
@@ -50,12 +65,13 @@ const Login: React.FC = () => {
       const clientId = payload.id;
 
       login(accessToken, username, email, clientId);
-      console.log('Received token:', accessToken, 'username:', username, 'email:', email, 'clientId:', clientId)
-      /* clear form fields and set success to true */
+      // console.log('Received token:', accessToken, 'username:', username, 'email:', email, 'clientId:', clientId)
+      console.log('Login successful');
+
+      // clear form fields and set success to true then navigate to dashboard
       setUserEmail('');
       setPassword('');
       setSuccess(true);
-      /* navigate to dashboard */
       navigate('/dashboard');
 
     } catch (error: any) {
