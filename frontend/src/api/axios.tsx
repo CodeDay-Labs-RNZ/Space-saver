@@ -2,8 +2,9 @@ import axios from 'axios'
 
 
 const instance = axios.create({
-  baseURL: process.env.API_URL||'http://localhost:3001'
+  baseURL: 'https://space-saver-backend.fly.dev'
 });
+
 
 /* interceptor to add token to request */
 instance.interceptors.request.use((config) => {
