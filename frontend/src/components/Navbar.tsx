@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
       <div className='navbar-content'>
         <Link to='/dashboard'>Home</Link>
         <Link to='/updateDeleteBookings'>Check Bookings</Link>
-        <Link to='/aboutus'>About Us</Link>
+        <Link to='/about'>About Us</Link>
         <span>Hello: {isAuthenticated ? username : 'Guest'}</span>
         <button onClick={handleLogout}>Logout</button>
       </div>
