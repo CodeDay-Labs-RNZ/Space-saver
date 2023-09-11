@@ -46,7 +46,6 @@ const AppContent = () => {
               <Route path='/updateDeleteBookings' element={<UpdateDeleteBooking/>}/>
               <Route path='/calendar' element={<Calendar onBookingData={() => {}} />}/>
               <Route path='/contact' element={<Contact/>}/>
-            {/*<Route path='/services' element={<Services/>}/>*/}
             </Routes>
         </Router>
       </React.Fragment>
