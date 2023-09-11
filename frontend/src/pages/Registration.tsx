@@ -184,7 +184,9 @@ const Register: React.FC = () => {
                 />
                  <p id='uidnote' className={userFocus && username && !validUserName ? "instructions" : "offscreen"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
-                    Username required <br />
+                    4 to 24 characters.<br />
+                    Must begin with a letter.<br />
+                    Letters, numbers, underscores, hyphens allowed.
                 </p>
               </div>              
 
@@ -214,7 +216,7 @@ const Register: React.FC = () => {
                 />
                  <p id='uidnote' className={emailFocus && email && !validEmail ? "instructions" : "offscreen"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
-                    Email required <br />
+                    Email must be valid and end with .com <br />
                 </p>
               </div>
 
