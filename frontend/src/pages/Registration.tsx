@@ -1,4 +1,4 @@
-import { faCheck, faInfoCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faInfoCircle, faTimes, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,8 @@ const Register: React.FC = () => {
   const userInputRef = useRef<HTMLInputElement | null>(null);
   const emailInputRef = useRef<HTMLInputElement | null>(null);
   const errRef = useRef<HTMLInputElement | null>(null);
+  // state for showing/hiding password
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   /* validUserName/validPwd/validPwdMatch is tied to whether a name/password/passwordMatch validates or not, 
     userFocus/pwdFocus/matchPwdFocus is whether we have focus on input field or not  */
@@ -241,7 +243,7 @@ This ensures that error message is cleared whenever any of these input fields ar
                 </p>
               </div>
 
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <label htmlFor="password" className="block font-bold text-sm mb-1">
                   Password{" "}
                   <span className={validPwd ? "valid" : "hidden"}>
@@ -253,7 +255,7 @@ This ensures that error message is cleared whenever any of these input fields ar
                 </label>
                 <input
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="Choose a password"
                   onChange={(e) => {setPassword(e.target.value)}}
@@ -263,6 +265,13 @@ This ensures that error message is cleared whenever any of these input fields ar
                   onFocus={() => setPwdFocus(true)}
                   onBlur={() => setPwdFocus(false)} 
                 />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5'
+                  >
+                  <FontAwesomeIcon icon={showPassword? faEyeSlash : faEye} />
+                </button>
                 <p id='pwdnote' className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
                   <FontAwesomeIcon icon={faInfoCircle} />
                   4 to 24 characters <br />
@@ -278,7 +287,7 @@ This ensures that error message is cleared whenever any of these input fields ar
                 </p>
               </div>
 
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <label htmlFor="confirmPassword" className="block font-bold text-sm mb-1">
                   Confirm Password{" "}
                   <span className={validPwdMatch && matchPwd ? "valid" : "hidden"}>
@@ -289,7 +298,7 @@ This ensures that error message is cleared whenever any of these input fields ar
                   </span>
                 </label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="confirmPassword"
                   placeholder="Confirm your password"
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"
@@ -300,6 +309,13 @@ This ensures that error message is cleared whenever any of these input fields ar
                   onFocus={() => setMatchPwdFocus(true)}
                   onBlur={() => setMatchPwdFocus(false)}
                 />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5'
+                  >
+                  <FontAwesomeIcon icon={showPassword? faEye : faEyeSlash} />
+                </button>
                 <p id='confirmnote' className={matchPwdFocus && !validPwdMatch ? "instructions" : "offscreen"}>
                   <FontAwesomeIcon icon={faInfoCircle} />
                   Must match the first password input field.
