@@ -64,7 +64,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const decoded = decodeJWT(token);
       if (decoded && decoded.username && decoded.email && decoded.id) {
-        console.log('Setting access token:', token);
         localStorage.setItem('Token', token);
         setAccessToken(token);
         setUserName(decoded.username);
