@@ -2,35 +2,62 @@ import React from "react";
 
 function AboutUs() {
     return (
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h1 className="text-3xl font-bold mb-4">Meet the Team (Click our names to be taken to our LinkedIns)</h1>
-                    <div className="space-y-2 grid grid-cols-3 gap-3">
-                        <div>
-                            <h1 className="text-xl font-semibold"><a href={"https://www.linkedin.com/in/ziniwang/"}>Zini Wang</a></h1>
-
-                            <h2>hi I am zini</h2>
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-semibold"><a href={"https://www.linkedin.com/in/robelhailu/"}>Robel Hailu</a></h1>
-
-                            <h2 className="">Highly driven student and aspiring software developer eager to learn and gain
-                                insight into the environment of the tech industry. I have experience in Java and Python, and
-                                some familiarity with HTML/CSS, JavaScript, MySQL, and Linux. I am interested in opportunities
-                                where I can collaborate to utilize my programming skills and further work towards personal
-                                and professional development. I am always learning and willing to learn to strengthen my
-                                understanding in programming concepts.</h2>
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-semibold"><a href={"https://www.linkedin.com/in/nicklasdipietro/"}>Nicklas Di Pietro</a></h1>
-
-                            <h2 className="">I am a highly focused and persistent learner. I have gained experience in various
-                            foundations of both IT and Software Development as I have worked across different industries. My primary
-                            language(s) are Java, and as of late Typescript. I have a foundation in Javascript, and MySQL, with some foundations
-                            in Linux environments. I believe in no person left behind, and always strive to make sure everyone's voice is heard,
-                            and know that a ship runs better when everyone is on the same page.</h2>
-                        </div>
-                    </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+            <h1 className="text-3xl font-bold mb-4">Meet the Team</h1>
+            <p className="text-gray-600 mb-6">
+                Click our names to be taken to our LinkedIns
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gray-100 p-4 rounded-lg shadow">
+                    <h2 className="text-xl font-semibold">
+                        <a
+                            href={"https://www.linkedin.com/in/ziniwang/"}
+                            className="text-blue-600 hover:underline"
+                        >
+                            Zini Wang
+                        </a>
+                    </h2>
+                    <p className="text-gray-700">Hi, I'm Zini</p>
                 </div>
+                <div className="bg-gray-100 p-4 rounded-lg shadow">
+                    <h2 className="text-xl font-semibold">
+                        <a
+                            href={"https://www.linkedin.com/in/robelhailu/"}
+                            className="text-blue-600 hover:underline"
+                        >
+                            Robel Hailu
+                        </a>
+                    </h2>
+                    <p className="text-gray-700">
+                        Highly driven student and aspiring software developer
+                        eager to learn and gain insight into the tech industry. I
+                        have experience in Java, Python, HTML/CSS, JavaScript,
+                        MySQL, and Linux. I am interested in opportunities where
+                        I can collaborate to utilize my programming skills and
+                        further work towards personal and professional
+                        development.
+                    </p>
+                </div>
+                <div className="bg-gray-100 p-4 rounded-lg shadow">
+                    <h2 className="text-xl font-semibold">
+                        <a
+                            href={"https://www.linkedin.com/in/nicklasdipietro/"}
+                            className="text-blue-600 hover:underline"
+                        >
+                            Nicklas Di Pietro
+                        </a>
+                    </h2>
+                    <p className="text-gray-700">
+                        I am a highly focused and persistent learner with
+                        experience in IT and Software Development. My primary
+                        languages are Java and Typescript, with a foundation in
+                        Javascript, MySQL, and Linux. I believe in the
+                        importance of teamwork and effective communication to
+                        achieve success.
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }
 

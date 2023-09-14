@@ -36,3 +36,4 @@ yarn-error.log*
 
 # api notes
 GoogleCalendarAPIIntegration.txt
+.PROD.env
