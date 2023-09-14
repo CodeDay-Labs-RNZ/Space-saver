@@ -2,11 +2,23 @@ import React, { useState } from 'react';
 import '../styles/LandingPage.css';
 
 
+/**
+ * ContactForm component is a form that allows users to enter their name, email, and message, and
+ * submit the form.
+ * 
+ * @returns Returning a JSX element that represents a contact form.
+ */
 const ContactForm: React.FC = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
 
+/**
+ * handleSubmit function is used to handle form submission logic in a TypeScript React application.
+ * 
+ * @param event - The event parameter is of type React.FormEvent, which is a generic type that
+ * represents a form event in React. It is used to handle form submissions in React components.
+ */
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         // Handle form submission logic here, such as sending data to a server

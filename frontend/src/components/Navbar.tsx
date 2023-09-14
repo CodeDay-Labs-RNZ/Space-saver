@@ -3,20 +3,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 const styles = require('../styles/Navbar.css');
 
+/**
+ * Navbar functional component that displays navigation links, 
+ * user information, and a logout button.
+ * 
+ * @returns Navbar component is returning a JSX element.
+ */
 const Navbar: React.FC = () => {
 
   const navigate = useNavigate();
   const { isAuthenticated, username, logout } = useAuth();
 
   const handleLogout= () => {
-    /* handle logout logic here  */
+    // handling logout logic  
     try {
       logout();
       navigate('/login');
     } catch (error) {
       console.error('Failed to log out', error);
     }
-
   }
 
   return (

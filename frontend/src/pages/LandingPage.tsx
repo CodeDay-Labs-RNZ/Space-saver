@@ -2,6 +2,11 @@ import React from 'react';
 import '../styles/LandingPage.css';
 import {Link} from "react-router-dom";
 
+/**
+ * `LandingPage` React functional component rendering a landing page with a header, content, and footer.
+ * 
+ * @returns The LandingPage component is returning a JSX element.
+ */
 const LandingPage: React.FC = () => {
     return (
         <div className="relative overflow-hidden bg-cover bg-no-repeat min-h-screen flex flex-col text-white bg-[url(../public/officespace2.jpg)] ">
