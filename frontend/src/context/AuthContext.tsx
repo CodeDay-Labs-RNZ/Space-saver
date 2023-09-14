@@ -122,7 +122,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUserName(decoded.username);
         setUserEmail(decoded.email);
         setClientId(decoded.id);
-        console.log('Updated state:', {token, username: decoded.username, email: decoded.email, id: decoded.id});
       } else {
         console.error('JWT did not contain username or email')
       }

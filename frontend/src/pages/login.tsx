@@ -67,7 +67,7 @@ In this case, the hook is used to clear error message (`errMsg`) whenever
       login(accessToken, username, email, clientId);
       // console.log('Received token:', accessToken, 'username:', username, 'email:', email, 'clientId:', clientId)
       console.log('Login successful');
-
+      
       // clear form fields and set success to true then navigate to dashboard
       setUserEmail('');
       setPassword('');
