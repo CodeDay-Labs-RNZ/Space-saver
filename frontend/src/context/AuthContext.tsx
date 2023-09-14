@@ -63,7 +63,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (token: string) => {
     try {
       const decoded = decodeJWT(token);
-      console.log("Decoded JWT:", decoded)
       if (decoded && decoded.username && decoded.email && decoded.id) {
         console.log('Setting access token:', token);
         localStorage.setItem('Token', token);
@@ -71,7 +70,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUserName(decoded.username);
         setUserEmail(decoded.email);
         setClientId(decoded.id);
-        console.log('Updated state:', {token, username: decoded.username, email: decoded.email, id: decoded.id});
       } else {
         console.error('JWT did not contain username or email')
       }
